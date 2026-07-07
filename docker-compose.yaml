@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  smart-home-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-home-tracker
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persistent SQLite volume mapping.
+      # The SQLite database is saved to /app/data inside the container,
+      # which maps to ./data on the Proxmox host.
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+      - PORT=3000

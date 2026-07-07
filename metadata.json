@@ -1,0 +1,6 @@
+{
+  "name": "Smart Home Device Tracker",
+  "description": "A comprehensive smart home device asset management tool with dynamic custom fields, SQLite backend, location/network/battery customizer, and complete comment logs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
