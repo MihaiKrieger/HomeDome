@@ -250,7 +250,7 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                   <XAxis type="number" stroke="#94a3b8" fontSize={10} allowDecimals={false} />
-                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={10} width={100} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={10} width={120} interval={0} />
                   <Tooltip 
                     cursor={{ fill: '#f8fafc' }}
                     contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}

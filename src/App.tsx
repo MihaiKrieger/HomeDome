@@ -2538,7 +2538,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v0.1.0
+              v1.0.1
             </span>
           </div>
         </div>
