@@ -1502,13 +1502,18 @@ export default function App() {
       const matchesBin = viewTrashOnly ? device.isDeleted : !device.isDeleted;
       if (!matchesBin) return false;
 
+      const matchesCustom = device.customValues && Object.values(device.customValues).some(
+        (val) => val && (val as string).toLowerCase().includes(query)
+      );
+
       return (
         device.name.toLowerCase().includes(query) ||
         device.serialNumber.toLowerCase().includes(query) ||
         device.macAddress.toLowerCase().includes(query) ||
         device.ipAddress.toLowerCase().includes(query) ||
         device.matterCode.toLowerCase().includes(query) ||
-        (device.description && device.description.toLowerCase().includes(query))
+        (device.description && device.description.toLowerCase().includes(query)) ||
+        matchesCustom
       );
     }).slice(0, 8);
   }, [searchTerm, devices, viewTrashOnly]);
@@ -1518,13 +1523,18 @@ export default function App() {
     const matchesBin = viewTrashOnly ? device.isDeleted : !device.isDeleted;
     if (!matchesBin) return false;
 
+    const matchesCustom = device.customValues && Object.values(device.customValues).some(
+      (val) => val && (val as string).toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const matchesSearch =
       device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.serialNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.macAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.ipAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.matterCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (device.description && device.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      (device.description && device.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      matchesCustom;
 
     const matchesLocation = !filterLocation || device.locationId === Number(filterLocation);
     const matchesNetwork = !filterNetwork || device.networkId === Number(filterNetwork);
@@ -1703,6 +1713,16 @@ export default function App() {
                         }
                         if (dev.description && dev.description.toLowerCase().includes(query)) {
                           matchDetails.push({ label: "Desc", element: highlightMatch(dev.description, searchTerm) });
+                        }
+                        if (dev.customValues) {
+                          (Object.entries(dev.customValues) as [string, string][]).forEach(([fieldIdStr, val]) => {
+                            if (val && val.toLowerCase().includes(query)) {
+                              const fieldId = Number(fieldIdStr);
+                              const field = customFields.find((cf) => cf.id === fieldId);
+                              const label = field ? field.name : "Custom";
+                              matchDetails.push({ label, element: highlightMatch(val, searchTerm) });
+                            }
+                          });
                         }
 
                         // Determine status colors for indicator dot
@@ -1986,6 +2006,16 @@ export default function App() {
                             }
                             if (device.description && device.description.toLowerCase().includes(q) && !device.name.toLowerCase().includes(q)) {
                               matches.push({ label: "Description", value: device.description });
+                            }
+                            if (device.customValues) {
+                              (Object.entries(device.customValues) as [string, string][]).forEach(([fieldIdStr, val]) => {
+                                if (val && val.toLowerCase().includes(q)) {
+                                  const fieldId = Number(fieldIdStr);
+                                  const field = customFields.find((cf) => cf.id === fieldId);
+                                  const label = field ? field.name : "Custom";
+                                  matches.push({ label, value: val });
+                                }
+                              });
                             }
                             if (matches.length > 0) {
                               return (
@@ -2538,7 +2568,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v1.0.1
+              v1.0.2
             </span>
           </div>
         </div>
