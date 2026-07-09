@@ -34,10 +34,12 @@ import {
   BarChart2,
   PieChart,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ListFilter
 } from "lucide-react";
 import { Device, Comment, Location, Network, BatteryType, CustomField, DeviceInterface, DeviceStatus } from "./types";
 import DeviceStatistics from "./components/DeviceStatistics";
+import SubnetMap from "./components/SubnetMap";
 
 const highlightMatch = (text: string | null | undefined, search: string) => {
   if (!text) return null;
@@ -80,6 +82,9 @@ export default function App() {
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [selectedDeviceDetails, setSelectedDeviceDetails] = useState<Device | null>(null);
   const [activeTabRight, setActiveTabRight] = useState<"details" | "logs" | "stats">("stats");
+  const [viewMode, setViewMode] = useState<"list" | "subnet">("list");
+  const [isFullscreenMap, setIsFullscreenMap] = useState(false);
+  const [isFullscreenCatalog, setIsFullscreenCatalog] = useState(false);
 
   // Loading & Messages
   const [isLoading, setIsLoading] = useState(true);
@@ -272,6 +277,40 @@ export default function App() {
     setFormMatterCode("");
 
     // Initialize custom field values
+    const initialCustoms: Record<number, string> = {};
+    customFields.forEach((field) => {
+      initialCustoms[field.id] = field.type === "boolean" ? "false" : "";
+    });
+    setFormCustomValues(initialCustoms);
+
+    setFormInitialComment("");
+    setFormError(null);
+    setIsDeviceModalOpen(true);
+  };
+
+  // Open Device Modal with pre-filled IP and network for Subnet Map reservation
+  const handleOpenAddModalWithIP = (ipAddress: string, preferredNetworkName: string) => {
+    setEditingDevice(null);
+    setFormName("");
+    setFormLocationId(locations[0]?.id?.toString() || "");
+    setFormStatus(statuses[0]?.name || "Online");
+    setFormSerialNumber("");
+    setFormMacAddress("");
+    
+    const matchedNetwork = networks.find(n => 
+      n.name.toLowerCase().includes(preferredNetworkName.toLowerCase()) ||
+      preferredNetworkName.toLowerCase().includes(n.name.toLowerCase())
+    );
+    setFormNetworkId(matchedNetwork ? matchedNetwork.id.toString() : (networks[0]?.id?.toString() || ""));
+    
+    setFormIpAddress(ipAddress);
+    setFormIpAllocation("Reserved DHCP");
+    setFormInterface(interfaces[0]?.name || "WiFI");
+    setFormPrice("0");
+    setFormCommissioningDate(new Date().toISOString().split("T")[0]);
+    setFormBatteryTypeId(batteryTypes[0]?.id?.toString() || "");
+    setFormMatterCode("");
+
     const initialCustoms: Record<number, string> = {};
     customFields.forEach((field) => {
       initialCustoms[field.id] = field.type === "boolean" ? "false" : "";
@@ -1638,11 +1677,80 @@ export default function App() {
         </div>
       </header>
 
+      {/* Sub-Navigation Tabs */}
+      <div className="bg-slate-50 border-b border-slate-200 sticky top-[73px] z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`py-3 text-sm font-semibold border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
+                viewMode === "list"
+                  ? "border-indigo-600 text-indigo-600 font-bold"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <ListFilter className="w-4 h-4" />
+              Device Catalog
+            </button>
+            <button
+              onClick={() => setViewMode("subnet")}
+              className={`py-3 text-sm font-semibold border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
+                viewMode === "subnet"
+                  ? "border-indigo-600 text-indigo-600 font-bold"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <NetworkIcon className="w-4 h-4" />
+              Subnet & IP Map
+              <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                vLANs
+              </span>
+            </button>
+          </div>
+
+          {viewMode === "list" && (
+            <button
+              onClick={() => setIsFullscreenCatalog(!isFullscreenCatalog)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all cursor-pointer shadow-xs my-2"
+              title={isFullscreenCatalog ? "Collapse view to show details side panel" : "Expand list to full width"}
+            >
+              {isFullscreenCatalog ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5 text-slate-500" />
+                  Show Details Panel
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                  Expand Full Width
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Main Content Area: Split Screen */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row gap-6">
         
-        {/* Left Side: Search, Filters, and Device List */}
-        <section className="flex-1 flex flex-col gap-4 min-w-0 md:max-w-xl lg:max-w-2xl xl:max-w-3xl">
+        {viewMode === "subnet" ? (
+          <SubnetMap
+            devices={devices}
+            networks={networks}
+            locations={locations}
+            selectedDevice={selectedDevice}
+            onSelectDevice={(device) => {
+              setSelectedDevice(device);
+              setActiveTabRight("details");
+            }}
+            onAddDeviceWithIP={handleOpenAddModalWithIP}
+            customFields={customFields}
+            isFullscreenMap={isFullscreenMap}
+            setIsFullscreenMap={setIsFullscreenMap}
+          />
+        ) : (
+          /* Left Side: Search, Filters, and Device List */
+          <section className={`flex-1 flex flex-col gap-4 min-w-0 ${isFullscreenCatalog ? "" : "md:max-w-xl lg:max-w-2xl xl:max-w-3xl"}`}>
           
           {/* Filters Dashboard Card */}
           <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col gap-4">
@@ -1906,7 +2014,11 @@ export default function App() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <div className="grid gap-3 overflow-y-auto max-h-[calc(100vh-340px)] pr-1">
+                <div className={`grid gap-3 overflow-y-auto max-h-[calc(100vh-340px)] pr-1 ${
+                  isFullscreenCatalog 
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+                    : "grid-cols-1"
+                }`}>
                   {paginatedDevices.map((device) => {
                     const isSelected = selectedDevice?.id === device.id;
                     
@@ -2144,9 +2256,11 @@ export default function App() {
             )}
           </div>
         </section>
+        )}
 
         {/* Right Side: Device Detail View & Historic comment logs */}
-        <section className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col max-h-[calc(100vh-130px)] md:sticky md:top-[84px]">
+        {!((viewMode === "subnet" && isFullscreenMap) || (viewMode === "list" && isFullscreenCatalog)) && (
+          <section className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col max-h-[calc(100vh-130px)] md:sticky md:top-[84px]">
           {/* Section Mode Switcher (Tab Bar) */}
           <div className="flex border-b border-slate-200 bg-slate-50/80 flex-shrink-0">
             <button
@@ -2557,6 +2671,7 @@ export default function App() {
             <DeviceStatistics devices={devices.filter(d => !d.isDeleted)} locations={locations} networks={networks} />
           )}
         </section>
+        )}
 
       </main>
 
@@ -2568,7 +2683,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v1.0.2
+              v1.0.3
             </span>
           </div>
         </div>
