@@ -59,9 +59,11 @@ async function startServer() {
       matter_code TEXT,
       description TEXT,
       is_deleted INTEGER DEFAULT 0,
+      related_device_id INTEGER,
       FOREIGN KEY(location_id) REFERENCES locations(id) ON DELETE SET NULL,
       FOREIGN KEY(network_id) REFERENCES networks(id) ON DELETE SET NULL,
-      FOREIGN KEY(battery_type_id) REFERENCES battery_types(id) ON DELETE SET NULL
+      FOREIGN KEY(battery_type_id) REFERENCES battery_types(id) ON DELETE SET NULL,
+      FOREIGN KEY(related_device_id) REFERENCES devices(id) ON DELETE SET NULL
     );
 
     CREATE TABLE IF NOT EXISTS device_custom_values (
@@ -102,6 +104,13 @@ async function startServer() {
   // Migrate is_deleted column for existing databases if needed
   try {
     db.exec("ALTER TABLE devices ADD COLUMN is_deleted INTEGER DEFAULT 0;");
+  } catch (err) {
+    // Column already exists, ignore error
+  }
+
+  // Migrate related_device_id column for existing databases if needed
+  try {
+    db.exec("ALTER TABLE devices ADD COLUMN related_device_id INTEGER;");
   } catch (err) {
     // Column already exists, ignore error
   }
@@ -413,11 +422,13 @@ async function startServer() {
           l.name as location_name,
           n.name as network_name,
           b.name as battery_type_name,
+          rd.name as related_device_name,
           (SELECT COUNT(*) FROM comments c WHERE c.device_id = d.id) as comment_count
         FROM devices d
         LEFT JOIN locations l ON d.location_id = l.id
         LEFT JOIN networks n ON d.network_id = n.id
         LEFT JOIN battery_types b ON d.battery_type_id = b.id
+        LEFT JOIN devices rd ON d.related_device_id = rd.id
         ORDER BY d.name ASC
       `).all() as any[];
 
@@ -455,7 +466,9 @@ async function startServer() {
         customValues: valuesMap[d.id] || {},
         commentCount: d.comment_count || 0,
         description: d.description || "",
-        isDeleted: d.is_deleted === 1
+        isDeleted: d.is_deleted === 1,
+        relatedDeviceId: d.related_device_id,
+        relatedDeviceName: d.related_device_name || ""
       }));
 
       res.json(result);
@@ -473,11 +486,13 @@ async function startServer() {
           d.*,
           l.name as location_name,
           n.name as network_name,
-          b.name as battery_type_name
+          b.name as battery_type_name,
+          rd.name as related_device_name
         FROM devices d
         LEFT JOIN locations l ON d.location_id = l.id
         LEFT JOIN networks n ON d.network_id = n.id
         LEFT JOIN battery_types b ON d.battery_type_id = b.id
+        LEFT JOIN devices rd ON d.related_device_id = rd.id
         WHERE d.id = ?
       `).get(id) as any;
 
@@ -519,6 +534,8 @@ async function startServer() {
         customValues: valuesMap,
         description: device.description || "",
         isDeleted: device.is_deleted === 1,
+        relatedDeviceId: device.related_device_id,
+        relatedDeviceName: device.related_device_name || "",
         comments: comments.map((c) => ({
           id: c.id,
           content: c.content,
@@ -536,8 +553,8 @@ async function startServer() {
       INSERT INTO devices (
         name, location_id, status, serial_number, mac_address, network_id,
         ip_address, ip_allocation, interface, price, commissioning_date,
-        battery_type_id, matter_code, description
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        battery_type_id, matter_code, description, related_device_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const insertCustomValue = db.prepare(`
@@ -559,7 +576,8 @@ async function startServer() {
         data.commissioningDate,
         data.batteryTypeId || null,
         data.matterCode || null,
-        data.description || null
+        data.description || null,
+        data.relatedDeviceId || null
       );
 
       const deviceId = info.lastInsertRowid;
@@ -581,7 +599,7 @@ async function startServer() {
       const {
         name, locationId, status, serialNumber, macAddress, networkId,
         ipAddress, ipAllocation, interface: devInterface, price,
-        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment
+        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId
       } = req.body;
 
       if (!name || name.trim() === "") {
@@ -612,7 +630,8 @@ async function startServer() {
         batteryTypeId: batteryTypeId ? Number(batteryTypeId) : null,
         matterCode: matterCode?.trim() || null,
         customValues,
-        description: (description || initialComment || "").trim() || null
+        description: (description || initialComment || "").trim() || null,
+        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null
       });
 
       res.status(201).json({ id: deviceId, message: "Device created successfully" });
@@ -640,7 +659,8 @@ async function startServer() {
         commissioning_date = ?,
         battery_type_id = ?,
         matter_code = ?,
-        description = ?
+        description = ?,
+        related_device_id = ?
       WHERE id = ?
     `);
 
@@ -784,6 +804,22 @@ async function startServer() {
         changes.push(`• Description: "${oldDesc || "None"}" ➔ "${newDesc || "None"}"`);
       }
 
+      let oldRelatedDeviceName = "None";
+      if (oldDevice.related_device_id) {
+        const rd = db.prepare("SELECT name FROM devices WHERE id = ?").get(oldDevice.related_device_id) as any;
+        if (rd) oldRelatedDeviceName = rd.name;
+      }
+
+      let newRelatedDeviceName = "None";
+      if (data.relatedDeviceId) {
+        const rd = db.prepare("SELECT name FROM devices WHERE id = ?").get(data.relatedDeviceId) as any;
+        if (rd) newRelatedDeviceName = rd.name;
+      }
+
+      if (oldDevice.related_device_id !== data.relatedDeviceId) {
+        changes.push(`• Related Device: "${oldRelatedDeviceName}" ➔ "${newRelatedDeviceName}"`);
+      }
+
       if (data.customValues) {
         for (const [fIdStr, val] of Object.entries(data.customValues)) {
           const fId = Number(fIdStr);
@@ -812,6 +848,7 @@ async function startServer() {
         data.batteryTypeId || null,
         data.matterCode || null,
         data.description || null,
+        data.relatedDeviceId || null,
         deviceId
       );
 
@@ -839,7 +876,7 @@ async function startServer() {
       const {
         name, locationId, status, serialNumber, macAddress, networkId,
         ipAddress, ipAllocation, interface: devInterface, price,
-        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment
+        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId
       } = req.body;
 
       if (!name || name.trim() === "") {
@@ -861,7 +898,8 @@ async function startServer() {
         batteryTypeId: batteryTypeId ? Number(batteryTypeId) : null,
         matterCode: matterCode?.trim() || null,
         customValues,
-        description: description !== undefined ? description : initialComment !== undefined ? initialComment : null
+        description: description !== undefined ? description : initialComment !== undefined ? initialComment : null,
+        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null
       });
 
       res.json({ message: "Device updated successfully" });

@@ -58,4 +58,6 @@ export interface Device {
   comments?: Comment[];
   description?: string;
   isDeleted?: boolean;
+  relatedDeviceId?: number | null;
+  relatedDeviceName?: string;
 }
