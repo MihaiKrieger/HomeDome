@@ -115,6 +115,29 @@ async function startServer() {
     // Column already exists, ignore error
   }
 
+  // Create device_links table if not exists and migrate legacy single related_device_id values
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS device_links (
+        source_device_id INTEGER NOT NULL,
+        target_device_id INTEGER NOT NULL,
+        PRIMARY KEY (source_device_id, target_device_id),
+        FOREIGN KEY (source_device_id) REFERENCES devices(id) ON DELETE CASCADE,
+        FOREIGN KEY (target_device_id) REFERENCES devices(id) ON DELETE CASCADE
+      );
+    `);
+    
+    const linkCount = db.prepare("SELECT COUNT(*) as count FROM device_links").get() as { count: number };
+    if (linkCount.count === 0) {
+      db.exec(`
+        INSERT OR IGNORE INTO device_links (source_device_id, target_device_id)
+        SELECT id, related_device_id FROM devices WHERE related_device_id IS NOT NULL;
+      `);
+    }
+  } catch (err) {
+    console.error("Migration of device_links failed:", err);
+  }
+
   // Seed default values if tables are empty
   const seedLocations = ["Living Room", "Kitchen", "Bedroom", "Bathroom", "Office", "Hallway", "Garage", "Garden"];
   const seedNetworks = ["Main WiFi", "IoT WiFi", "Zigbee Mesh", "Thread Mesh", "Bluetooth Network"];
@@ -422,13 +445,11 @@ async function startServer() {
           l.name as location_name,
           n.name as network_name,
           b.name as battery_type_name,
-          rd.name as related_device_name,
           (SELECT COUNT(*) FROM comments c WHERE c.device_id = d.id) as comment_count
         FROM devices d
         LEFT JOIN locations l ON d.location_id = l.id
         LEFT JOIN networks n ON d.network_id = n.id
         LEFT JOIN battery_types b ON d.battery_type_id = b.id
-        LEFT JOIN devices rd ON d.related_device_id = rd.id
         ORDER BY d.name ASC
       `).all() as any[];
 
@@ -445,31 +466,75 @@ async function startServer() {
         valuesMap[cv.device_id][cv.field_id] = cv.value;
       });
 
-      const result = devices.map((d) => ({
-        id: d.id,
-        name: d.name,
-        locationId: d.location_id,
-        locationName: d.location_name || "Unassigned",
-        status: d.status,
-        serialNumber: d.serial_number || "",
-        macAddress: d.mac_address || "",
-        networkId: d.network_id,
-        networkName: d.network_name || "Unassigned",
-        ipAddress: d.ip_address || "",
-        ipAllocation: d.ip_allocation || "DHCP",
-        interface: d.interface,
-        price: d.price,
-        commissioningDate: d.commissioning_date,
-        batteryTypeId: d.battery_type_id,
-        batteryTypeName: d.battery_type_name || "Unassigned",
-        matterCode: d.matter_code || "",
-        customValues: valuesMap[d.id] || {},
-        commentCount: d.comment_count || 0,
-        description: d.description || "",
-        isDeleted: d.is_deleted === 1,
-        relatedDeviceId: d.related_device_id,
-        relatedDeviceName: d.related_device_name || ""
-      }));
+      // Fetch device links
+      const links = db.prepare(`
+        SELECT 
+          dl.source_device_id, 
+          dl.target_device_id, 
+          sd.name as source_name,
+          sd.serial_number as source_sn,
+          td.name as target_name,
+          td.serial_number as target_sn
+        FROM device_links dl
+        JOIN devices sd ON dl.source_device_id = sd.id
+        JOIN devices td ON dl.target_device_id = td.id
+        WHERE sd.is_deleted = 0 AND td.is_deleted = 0
+      `).all() as any[];
+
+      const relatedMap: Record<number, { id: number, name: string, serialNumber?: string }[]> = {};
+      const referencedMap: Record<number, { id: number, name: string, serialNumber?: string }[]> = {};
+
+      links.forEach(l => {
+        if (!relatedMap[l.source_device_id]) {
+          relatedMap[l.source_device_id] = [];
+        }
+        relatedMap[l.source_device_id].push({
+          id: l.target_device_id,
+          name: l.target_name,
+          serialNumber: l.target_sn || ""
+        });
+
+        if (!referencedMap[l.target_device_id]) {
+          referencedMap[l.target_device_id] = [];
+        }
+        referencedMap[l.target_device_id].push({
+          id: l.source_device_id,
+          name: l.source_name,
+          serialNumber: l.source_sn || ""
+        });
+      });
+
+      const result = devices.map((d) => {
+        const related = relatedMap[d.id] || [];
+        const referenced = referencedMap[d.id] || [];
+        return {
+          id: d.id,
+          name: d.name,
+          locationId: d.location_id,
+          locationName: d.location_name || "Unassigned",
+          status: d.status,
+          serialNumber: d.serial_number || "",
+          macAddress: d.mac_address || "",
+          networkId: d.network_id,
+          networkName: d.network_name || "Unassigned",
+          ipAddress: d.ip_address || "",
+          ipAllocation: d.ip_allocation || "DHCP",
+          interface: d.interface,
+          price: d.price,
+          commissioningDate: d.commissioning_date,
+          batteryTypeId: d.battery_type_id,
+          batteryTypeName: d.battery_type_name || "Unassigned",
+          matterCode: d.matter_code || "",
+          customValues: valuesMap[d.id] || {},
+          commentCount: d.comment_count || 0,
+          description: d.description || "",
+          isDeleted: d.is_deleted === 1,
+          relatedDeviceId: related[0] ? related[0].id : null,
+          relatedDeviceName: related[0] ? related[0].name : "",
+          relatedDevices: related,
+          referencedByDevices: referenced
+        };
+      });
 
       res.json(result);
     } catch (err: any) {
@@ -486,13 +551,11 @@ async function startServer() {
           d.*,
           l.name as location_name,
           n.name as network_name,
-          b.name as battery_type_name,
-          rd.name as related_device_name
+          b.name as battery_type_name
         FROM devices d
         LEFT JOIN locations l ON d.location_id = l.id
         LEFT JOIN networks n ON d.network_id = n.id
         LEFT JOIN battery_types b ON d.battery_type_id = b.id
-        LEFT JOIN devices rd ON d.related_device_id = rd.id
         WHERE d.id = ?
       `).get(id) as any;
 
@@ -512,6 +575,42 @@ async function startServer() {
       const comments = db.prepare(`
         SELECT * FROM comments WHERE device_id = ? ORDER BY created_at DESC
       `).all(id) as any[];
+
+      // Fetch device links for this device
+      const links = db.prepare(`
+        SELECT 
+          dl.source_device_id, 
+          dl.target_device_id, 
+          sd.name as source_name,
+          sd.serial_number as source_sn,
+          td.name as target_name,
+          td.serial_number as target_sn
+        FROM device_links dl
+        JOIN devices sd ON dl.source_device_id = sd.id
+        JOIN devices td ON dl.target_device_id = td.id
+        WHERE (dl.source_device_id = ? OR dl.target_device_id = ?)
+          AND sd.is_deleted = 0 AND td.is_deleted = 0
+      `).all(id, id) as any[];
+
+      const relatedDevices: { id: number, name: string, serialNumber?: string }[] = [];
+      const referencedByDevices: { id: number, name: string, serialNumber?: string }[] = [];
+
+      links.forEach(l => {
+        if (l.source_device_id === Number(id)) {
+          relatedDevices.push({
+            id: l.target_device_id,
+            name: l.target_name,
+            serialNumber: l.target_sn || ""
+          });
+        }
+        if (l.target_device_id === Number(id)) {
+          referencedByDevices.push({
+            id: l.source_device_id,
+            name: l.source_name,
+            serialNumber: l.source_sn || ""
+          });
+        }
+      });
 
       res.json({
         id: device.id,
@@ -534,8 +633,10 @@ async function startServer() {
         customValues: valuesMap,
         description: device.description || "",
         isDeleted: device.is_deleted === 1,
-        relatedDeviceId: device.related_device_id,
-        relatedDeviceName: device.related_device_name || "",
+        relatedDeviceId: relatedDevices[0] ? relatedDevices[0].id : null,
+        relatedDeviceName: relatedDevices[0] ? relatedDevices[0].name : "",
+        relatedDevices,
+        referencedByDevices,
         comments: comments.map((c) => ({
           id: c.id,
           content: c.content,
@@ -562,6 +663,10 @@ async function startServer() {
     `);
 
     const runTx = db.transaction((data: any) => {
+      const firstRelatedId = data.relatedDeviceIds && data.relatedDeviceIds.length > 0 
+        ? Number(data.relatedDeviceIds[0]) 
+        : (data.relatedDeviceId ? Number(data.relatedDeviceId) : null);
+
       const info = insertDevice.run(
         data.name,
         data.locationId || null,
@@ -577,7 +682,7 @@ async function startServer() {
         data.batteryTypeId || null,
         data.matterCode || null,
         data.description || null,
-        data.relatedDeviceId || null
+        firstRelatedId
       );
 
       const deviceId = info.lastInsertRowid;
@@ -589,8 +694,33 @@ async function startServer() {
         }
       }
 
+      // Link related devices in device_links
+      const finalRelatedIds: number[] = [];
+      if (data.relatedDeviceIds && Array.isArray(data.relatedDeviceIds)) {
+        data.relatedDeviceIds.forEach((id: any) => {
+          if (id) finalRelatedIds.push(Number(id));
+        });
+      } else if (data.relatedDeviceId) {
+        finalRelatedIds.push(Number(data.relatedDeviceId));
+      }
+
+      const linkedNames: string[] = [];
+      if (finalRelatedIds.length > 0) {
+        const insertLink = db.prepare("INSERT OR IGNORE INTO device_links (source_device_id, target_device_id) VALUES (?, ?)");
+        finalRelatedIds.forEach((targetId: number) => {
+          insertLink.run(deviceId, targetId);
+          const dev = db.prepare("SELECT name FROM devices WHERE id = ?").get(targetId) as any;
+          if (dev) linkedNames.push(dev.name);
+        });
+      }
+
+      let logMsg = "Device profile created.";
+      if (linkedNames.length > 0) {
+        logMsg = `Device profile created. Linked to: ${linkedNames.join(", ")}`;
+      }
+
       db.prepare("INSERT INTO comments (device_id, content, created_at) VALUES (?, ?, ?)")
-        .run(deviceId, "Device profile created.", new Date().toISOString());
+        .run(deviceId, logMsg, new Date().toISOString());
 
       return deviceId;
     });
@@ -599,7 +729,7 @@ async function startServer() {
       const {
         name, locationId, status, serialNumber, macAddress, networkId,
         ipAddress, ipAllocation, interface: devInterface, price,
-        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId
+        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId, relatedDeviceIds
       } = req.body;
 
       if (!name || name.trim() === "") {
@@ -631,7 +761,8 @@ async function startServer() {
         matterCode: matterCode?.trim() || null,
         customValues,
         description: (description || initialComment || "").trim() || null,
-        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null
+        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null,
+        relatedDeviceIds: relatedDeviceIds || null
       });
 
       res.status(201).json({ id: deviceId, message: "Device created successfully" });
@@ -804,20 +935,39 @@ async function startServer() {
         changes.push(`• Description: "${oldDesc || "None"}" ➔ "${newDesc || "None"}"`);
       }
 
-      let oldRelatedDeviceName = "None";
-      if (oldDevice.related_device_id) {
-        const rd = db.prepare("SELECT name FROM devices WHERE id = ?").get(oldDevice.related_device_id) as any;
-        if (rd) oldRelatedDeviceName = rd.name;
+      // Fetch old relationships for diffing
+      const oldLinks = db.prepare(`
+        SELECT dl.target_device_id, d.name 
+        FROM device_links dl 
+        JOIN devices d ON dl.target_device_id = d.id 
+        WHERE dl.source_device_id = ?
+      `).all(deviceId) as any[];
+
+      const oldRelatedIds = oldLinks.map(l => l.target_device_id);
+      const oldRelatedNames = oldLinks.map(l => l.name);
+
+      const finalRelatedIds: number[] = [];
+      if (data.relatedDeviceIds && Array.isArray(data.relatedDeviceIds)) {
+        data.relatedDeviceIds.forEach((id: any) => {
+          if (id) finalRelatedIds.push(Number(id));
+        });
+      } else if (data.relatedDeviceId) {
+        finalRelatedIds.push(Number(data.relatedDeviceId));
       }
 
-      let newRelatedDeviceName = "None";
-      if (data.relatedDeviceId) {
-        const rd = db.prepare("SELECT name FROM devices WHERE id = ?").get(data.relatedDeviceId) as any;
-        if (rd) newRelatedDeviceName = rd.name;
-      }
+      const newRelatedNames: string[] = [];
+      finalRelatedIds.forEach((targetId: number) => {
+        const d = db.prepare("SELECT name FROM devices WHERE id = ?").get(targetId) as any;
+        if (d) newRelatedNames.push(d.name);
+      });
 
-      if (oldDevice.related_device_id !== data.relatedDeviceId) {
-        changes.push(`• Related Device: "${oldRelatedDeviceName}" ➔ "${newRelatedDeviceName}"`);
+      // Compare and log change
+      const sortedOld = [...oldRelatedIds].sort().join(",");
+      const sortedNew = [...finalRelatedIds].sort().join(",");
+      if (sortedOld !== sortedNew) {
+        const oldLabel = oldRelatedNames.length > 0 ? oldRelatedNames.join(", ") : "None";
+        const newLabel = newRelatedNames.length > 0 ? newRelatedNames.join(", ") : "None";
+        changes.push(`• Related Devices: "${oldLabel}" ➔ "${newLabel}"`);
       }
 
       if (data.customValues) {
@@ -831,6 +981,8 @@ async function startServer() {
           }
         }
       }
+
+      const firstRelatedId = finalRelatedIds.length > 0 ? finalRelatedIds[0] : null;
 
       // 5. Execute Update
       const info = updateDevice.run(
@@ -848,12 +1000,21 @@ async function startServer() {
         data.batteryTypeId || null,
         data.matterCode || null,
         data.description || null,
-        data.relatedDeviceId || null,
+        firstRelatedId,
         deviceId
       );
 
       if (info.changes === 0) {
         throw new Error("Device not found");
+      }
+
+      // Update device links in db
+      db.prepare("DELETE FROM device_links WHERE source_device_id = ?").run(deviceId);
+      if (finalRelatedIds.length > 0) {
+        const insertLink = db.prepare("INSERT OR IGNORE INTO device_links (source_device_id, target_device_id) VALUES (?, ?)");
+        finalRelatedIds.forEach((targetId: number) => {
+          insertLink.run(deviceId, targetId);
+        });
       }
 
       if (data.customValues) {
@@ -876,7 +1037,7 @@ async function startServer() {
       const {
         name, locationId, status, serialNumber, macAddress, networkId,
         ipAddress, ipAllocation, interface: devInterface, price,
-        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId
+        commissioningDate, batteryTypeId, matterCode, customValues, description, initialComment, relatedDeviceId, relatedDeviceIds
       } = req.body;
 
       if (!name || name.trim() === "") {
@@ -899,7 +1060,8 @@ async function startServer() {
         matterCode: matterCode?.trim() || null,
         customValues,
         description: description !== undefined ? description : initialComment !== undefined ? initialComment : null,
-        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null
+        relatedDeviceId: relatedDeviceId ? Number(relatedDeviceId) : null,
+        relatedDeviceIds: relatedDeviceIds || null
       });
 
       res.json({ message: "Device updated successfully" });

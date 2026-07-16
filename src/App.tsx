@@ -138,7 +138,7 @@ export default function App() {
   const [formMatterCode, setFormMatterCode] = useState("");
   const [formCustomValues, setFormCustomValues] = useState<Record<number, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
-  const [formRelatedDeviceId, setFormRelatedDeviceId] = useState("");
+  const [formRelatedDeviceIds, setFormRelatedDeviceIds] = useState<number[]>([]);
   const [searchLinkQuery, setSearchLinkQuery] = useState("");
   const [isLinkDropdownOpen, setIsLinkDropdownOpen] = useState(false);
 
@@ -268,7 +268,7 @@ export default function App() {
     setEditingDevice(null);
     setFormName("");
     setFormLocationId(locations[0]?.id?.toString() || "");
-    setFormRelatedDeviceId("");
+    setFormRelatedDeviceIds([]);
     setSearchLinkQuery("");
     setFormStatus(statuses[0]?.name || "Online");
     setFormSerialNumber("");
@@ -299,7 +299,7 @@ export default function App() {
     setEditingDevice(null);
     setFormName("");
     setFormLocationId(locations[0]?.id?.toString() || "");
-    setFormRelatedDeviceId("");
+    setFormRelatedDeviceIds([]);
     setSearchLinkQuery("");
     setFormStatus(statuses[0]?.name || "Online");
     setFormSerialNumber("");
@@ -346,7 +346,7 @@ export default function App() {
     setFormCommissioningDate(device.commissioningDate);
     setFormBatteryTypeId(device.batteryTypeId?.toString() || "");
     setFormMatterCode(device.matterCode);
-    setFormRelatedDeviceId(device.relatedDeviceId?.toString() || "");
+    setFormRelatedDeviceIds(device.relatedDevices ? device.relatedDevices.map(d => d.id) : []);
     setSearchLinkQuery("");
 
     // Initialize form custom values from device data or set default
@@ -615,8 +615,8 @@ export default function App() {
       return;
     }
 
-    if (editingDevice && formRelatedDeviceId && Number(formRelatedDeviceId) === editingDevice.id) {
-      setFormError("A device cannot be related to itself.");
+    if (editingDevice && formRelatedDeviceIds.includes(editingDevice.id)) {
+      setFormError("A device cannot link to itself.");
       return;
     }
 
@@ -637,7 +637,8 @@ export default function App() {
       matterCode: formMatterCode.trim() || null,
       customValues: formCustomValues,
       description: formInitialComment.trim() || null,
-      relatedDeviceId: formRelatedDeviceId ? Number(formRelatedDeviceId) : null
+      relatedDeviceId: formRelatedDeviceIds.length > 0 ? formRelatedDeviceIds[0] : null,
+      relatedDeviceIds: formRelatedDeviceIds
     };
 
     const url = editingDevice ? `/api/devices/${editingDevice.id}` : "/api/devices";
@@ -2459,39 +2460,100 @@ export default function App() {
                   {/* Device Relationships */}
                   <div>
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Device Relationships</h4>
-                    <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                      {selectedDevice.relatedDeviceId ? (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-indigo-50 border border-indigo-100 rounded-lg">
-                              <Link2 className="w-4 h-4 text-indigo-600" />
-                            </div>
-                            <div>
-                              <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Related Device</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const linked = devices.find(d => d.id === selectedDevice.relatedDeviceId);
-                                  if (linked) {
-                                    setSelectedDevice(linked);
-                                  }
-                                }}
-                                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors text-left flex items-center gap-1 cursor-pointer"
-                              >
-                                {selectedDevice.relatedDeviceName || "Unknown Device"}
-                                <ChevronRight className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Outgoing Links (This device links to) */}
+                      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                          Linked Devices (Outgoing)
+                        </span>
+                        {selectedDevice.relatedDevices && selectedDevice.relatedDevices.length > 0 ? (
+                          <div className="space-y-2">
+                            {selectedDevice.relatedDevices.map((rel) => (
+                              <div key={rel.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-150 shadow-sm hover:border-slate-300 transition-all">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="p-1.5 bg-indigo-50 border border-indigo-100 rounded-lg shrink-0">
+                                    <Link2 className="w-3.5 h-3.5 text-indigo-600" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const linked = devices.find(d => d.id === rel.id);
+                                        if (linked) {
+                                          setSelectedDevice(linked);
+                                        }
+                                      }}
+                                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors text-left flex items-center gap-1 cursor-pointer truncate"
+                                    >
+                                      <span className="truncate">{rel.name}</span>
+                                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                    </button>
+                                    {rel.serialNumber && (
+                                      <span className="block text-[9px] text-slate-400 font-mono truncate">
+                                        S/N: {rel.serialNumber}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-150 px-2 py-0.5 rounded shrink-0">
+                                  ID: {rel.id}
+                                </span>
+                              </div>
+                            ))}
                           </div>
-                          <span className="text-[10px] text-slate-400 font-mono bg-white border border-slate-150 px-2 py-0.5 rounded-md">
-                            ID: {selectedDevice.relatedDeviceId}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="text-center py-2 text-xs text-slate-400 italic">
-                          No relationship link defined for this device.
-                        </div>
-                      )}
+                        ) : (
+                          <div className="text-xs text-slate-400 italic py-1">
+                            This device does not link to any other devices.
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Incoming Links (Referenced by other devices) */}
+                      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                          Referenced By (Incoming)
+                        </span>
+                        {selectedDevice.referencedByDevices && selectedDevice.referencedByDevices.length > 0 ? (
+                          <div className="space-y-2">
+                            {selectedDevice.referencedByDevices.map((rel) => (
+                              <div key={rel.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-150 shadow-sm hover:border-slate-300 transition-all">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="p-1.5 bg-emerald-50 border border-emerald-100 rounded-lg shrink-0">
+                                    <Link2 className="w-3.5 h-3.5 text-emerald-600" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const linked = devices.find(d => d.id === rel.id);
+                                        if (linked) {
+                                          setSelectedDevice(linked);
+                                        }
+                                      }}
+                                      className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors text-left flex items-center gap-1 cursor-pointer truncate"
+                                    >
+                                      <span className="truncate">{rel.name}</span>
+                                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                    </button>
+                                    {rel.serialNumber && (
+                                      <span className="block text-[9px] text-slate-400 font-mono truncate">
+                                        S/N: {rel.serialNumber}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-150 px-2 py-0.5 rounded shrink-0">
+                                  ID: {rel.id}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-xs text-slate-400 italic py-1">
+                            No other devices reference this device.
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -2738,7 +2800,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v1.0.3
+              v1.0.6
             </span>
           </div>
         </div>
@@ -3724,93 +3786,111 @@ export default function App() {
               {/* SECTION 5: Device Link & Relationships (Optional) */}
               <div className="space-y-3.5 pt-1">
                 <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">5. Device Relationships</h4>
-                <div className="space-y-2">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Related To</label>
+                <div className="space-y-3">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Related To (Multiple links permitted)</label>
                   
-                  {formRelatedDeviceId ? (
-                    <div className="flex items-center justify-between bg-indigo-50 border border-indigo-100/50 rounded-xl px-3.5 py-2">
-                      <div className="flex items-center gap-2">
-                        <Link2 className="w-4 h-4 text-indigo-500" />
-                        <span className="text-xs font-semibold text-indigo-700">
-                          Linked to: {devices.find(d => d.id === Number(formRelatedDeviceId))?.name || "Unknown Device"}
-                        </span>
-                        <span className="text-[10px] text-indigo-400 font-mono">
-                          (ID: {formRelatedDeviceId})
-                        </span>
+                  {/* Selected Links List */}
+                  {formRelatedDeviceIds.length > 0 && (
+                    <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-150">
+                      <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                        Currently Linked Devices ({formRelatedDeviceIds.length})
+                      </span>
+                      <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                        {formRelatedDeviceIds.map((id) => {
+                          const relDevice = devices.find(d => d.id === id);
+                          return (
+                            <div key={id} className="flex items-center justify-between bg-white border border-slate-150 rounded-lg px-2.5 py-1.5 shadow-xs">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Link2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                                <span className="text-xs font-semibold text-slate-700 truncate">
+                                  {relDevice?.name || `Device #${id}`}
+                                </span>
+                                <span className="text-[9px] text-slate-400 font-mono shrink-0">
+                                  (ID: {id})
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormRelatedDeviceIds(prev => prev.filter(item => item !== id));
+                                }}
+                                className="text-[10px] text-slate-400 hover:text-red-500 font-bold transition-colors cursor-pointer shrink-0"
+                              >
+                                Disconnect
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setFormRelatedDeviceId("")}
-                        className="text-xs text-slate-400 hover:text-red-500 font-bold transition-colors cursor-pointer"
-                      >
-                        Disconnect Link
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search existing devices in the database by name or S/N..."
-                          value={searchLinkQuery}
-                          onChange={(e) => {
-                            setSearchLinkQuery(e.target.value);
-                            setIsLinkDropdownOpen(true);
-                          }}
-                          onFocus={() => setIsLinkDropdownOpen(true)}
-                          className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs pl-8 pr-3 py-2 outline-hidden"
-                        />
-                        <Link2 className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
-                      </div>
-                      
-                      {isLinkDropdownOpen && (
-                        <>
-                          <div 
-                            className="fixed inset-0 z-30" 
-                            onClick={() => setIsLinkDropdownOpen(false)} 
-                          />
-                          <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-40 p-1">
-                            {(() => {
-                              const filtered = devices.filter(d => 
-                                d.isDeleted !== true &&
-                                (!editingDevice || d.id !== editingDevice.id) &&
-                                (d.name.toLowerCase().includes(searchLinkQuery.toLowerCase()) ||
-                                 (d.serialNumber && d.serialNumber.toLowerCase().includes(searchLinkQuery.toLowerCase())))
-                              );
-                              
-                              if (filtered.length === 0) {
-                                return (
-                                  <div className="text-xs text-slate-400 p-3 text-center italic">
-                                    No active devices found matching "{searchLinkQuery}"
-                                  </div>
-                                );
-                              }
-                              
-                              return filtered.map(d => (
-                                <button
-                                  key={d.id}
-                                  type="button"
-                                  onClick={() => {
-                                    setFormRelatedDeviceId(d.id.toString());
-                                    setSearchLinkQuery("");
-                                    setIsLinkDropdownOpen(false);
-                                  }}
-                                  className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 rounded-lg text-slate-700 flex items-center justify-between transition-colors cursor-pointer"
-                                >
-                                  <div className="font-medium text-slate-800">{d.name}</div>
-                                  <div className="text-[10px] text-slate-400 font-mono">
-                                    {d.serialNumber || `ID: ${d.id}`}
-                                  </div>
-                                </button>
-                              ));
-                            })()}
-                          </div>
-                        </>
-                      )}
                     </div>
                   )}
+
+                  {/* Add New Link Search */}
+                  <div className="relative">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search devices to link by name or S/N..."
+                        value={searchLinkQuery}
+                        onChange={(e) => {
+                          setSearchLinkQuery(e.target.value);
+                          setIsLinkDropdownOpen(true);
+                        }}
+                        onFocus={() => setIsLinkDropdownOpen(true)}
+                        className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs pl-8 pr-3 py-2 outline-hidden"
+                      />
+                      <Link2 className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
+                    </div>
+                    
+                    {isLinkDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-30" 
+                          onClick={() => setIsLinkDropdownOpen(false)} 
+                        />
+                        <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-40 p-1">
+                          {(() => {
+                            const filtered = devices.filter(d => 
+                              d.isDeleted !== true &&
+                              (!editingDevice || d.id !== editingDevice.id) &&
+                              !formRelatedDeviceIds.includes(d.id) &&
+                              (d.name.toLowerCase().includes(searchLinkQuery.toLowerCase()) ||
+                               (d.serialNumber && d.serialNumber.toLowerCase().includes(searchLinkQuery.toLowerCase())))
+                            );
+                            
+                            if (filtered.length === 0) {
+                              return (
+                                <div className="text-xs text-slate-400 p-3 text-center italic">
+                                  No additional devices found matching "{searchLinkQuery}"
+                                </div>
+                              );
+                            }
+                            
+                            return filtered.map(d => (
+                              <button
+                                key={d.id}
+                                type="button"
+                                onClick={() => {
+                                  setFormRelatedDeviceIds(prev => [...prev, d.id]);
+                                  setSearchLinkQuery("");
+                                  setIsLinkDropdownOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 rounded-lg text-slate-700 flex items-center justify-between transition-colors cursor-pointer"
+                              >
+                                <div className="font-medium text-slate-800">{d.name}</div>
+                                <div className="text-[10px] text-slate-400 font-mono">
+                                  {d.serialNumber || `ID: ${d.id}`}
+                                </div>
+                              </button>
+                            ));
+                          })()}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
                   <span className="block text-[9px] text-slate-400">
-                    Establishes an association to another device in the catalog (e.g., parent router, linked sensor, power supply source).
+                    Establishes associations to other devices in the catalog (e.g., replacement products, parent router, auxiliary sensors, power supply sources).
                   </span>
                 </div>
               </div>

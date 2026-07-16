@@ -35,6 +35,12 @@ export interface CustomField {
   type: "text" | "number" | "boolean";
 }
 
+export interface DeviceRelation {
+  id: number;
+  name: string;
+  serialNumber?: string;
+}
+
 export interface Device {
   id: number;
   name: string;
@@ -60,4 +66,6 @@ export interface Device {
   isDeleted?: boolean;
   relatedDeviceId?: number | null;
   relatedDeviceName?: string;
+  relatedDevices?: DeviceRelation[];
+  referencedByDevices?: DeviceRelation[];
 }
