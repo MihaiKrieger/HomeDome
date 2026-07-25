@@ -2063,63 +2063,140 @@ export default function App() {
                           setSelectedDevice(device);
                           setActiveTabRight("details");
                         }}
-                        className={`group relative bg-white border rounded-xl p-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between gap-3 ${
+                        className={`group relative bg-white border rounded-xl p-3 cursor-pointer transition-all hover:shadow-xs flex flex-col gap-2 ${
                           isSelected 
-                            ? "border-indigo-600 ring-2 ring-indigo-50/50" 
-                            : "border-slate-200 hover:border-slate-300"
+                            ? "border-indigo-600 ring-2 ring-indigo-50/50 bg-indigo-50/20" 
+                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/30"
                         }`}
                       >
-                        {/* Top Row: Name and Quick Badges */}
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <h4 className="font-semibold text-slate-900 truncate group-hover:text-indigo-600 transition-colors flex items-center gap-2">
+                        {/* Top Row: Name, Location & Status / Interface Badges */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${statusDotColor}`} title={`Status: ${device.status}`} />
+                            <h4 className="font-semibold text-slate-900 text-sm truncate group-hover:text-indigo-600 transition-colors">
                               {highlightMatch(device.name, searchTerm)}
                             </h4>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                              <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                              <span>{device.locationName}</span>
-                            </div>
+                            {device.locationName && (
+                              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-500 font-medium shrink-0 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-150">
+                                <MapPin className="w-3 h-3 text-slate-400" />
+                                <span className="truncate max-w-[110px]">{device.locationName}</span>
+                              </span>
+                            )}
                           </div>
 
-                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <div className="flex items-center gap-1.5 shrink-0">
                             {/* Interface Badge */}
-                            <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-md">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
                               {device.interface}
                             </span>
                             {/* Status Badge */}
-                            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border ${statusBadgeStyle}`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${statusDotColor}`}></span>
+                            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${statusBadgeStyle}`}>
                               {device.status}
                             </span>
                           </div>
                         </div>
 
-                        {/* Middle row: Network & IP */}
-                        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2 rounded-lg border border-slate-100">
-                          <div className="flex flex-col gap-0.5 min-w-0">
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Network</span>
-                            <span className="text-slate-700 font-medium truncate flex items-center gap-1">
-                              <Wifi className="w-3 h-3 text-slate-400" />
-                              {device.networkName}
+                        {/* Bottom Metadata & Actions Row */}
+                        <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+                          <div className="flex items-center gap-2 text-[11px] min-w-0 truncate">
+                            {/* Location for mobile or small layout fallback */}
+                            {device.locationName && (
+                              <span className="sm:hidden flex items-center gap-1 text-slate-600 font-medium truncate shrink-0">
+                                <MapPin className="w-3 h-3 text-slate-400" />
+                                <span>{device.locationName}</span>
+                              </span>
+                            )}
+
+                            {/* Network */}
+                            <span className="flex items-center gap-1 text-slate-600 truncate">
+                              <Wifi className="w-3 h-3 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[120px]">{device.networkName}</span>
                             </span>
+
+                            {/* IP Address */}
+                            {isIpSupported(device.interface) && device.ipAddress && (
+                              <>
+                                <span className="text-slate-300">•</span>
+                                <span className="font-mono text-slate-600 truncate">
+                                  {highlightMatch(device.ipAddress, searchTerm)}
+                                </span>
+                              </>
+                            )}
+
+                            {/* Comments Count Badge */}
+                            {device.commentCount > 0 && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDevice(device);
+                                  setActiveTabRight("logs");
+                                }}
+                                className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded text-slate-600 hover:text-indigo-600 transition-all cursor-pointer text-[10px] font-semibold shrink-0"
+                                title={`${device.commentCount} comments/logs. Click to view history.`}
+                              >
+                                <MessageSquare className="w-3 h-3 text-slate-400" />
+                                <span>{device.commentCount}</span>
+                              </button>
+                            )}
                           </div>
-                          <div className="flex flex-col gap-0.5 min-w-0">
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">IPv4 Address</span>
-                            <span className="text-slate-700 font-mono truncate">
-                              {!isIpSupported(device.interface) ? (
-                                <span className="text-slate-400 italic font-sans font-normal">N/A</span>
-                              ) : device.ipAddress ? (
-                                <>
-                                  {highlightMatch(device.ipAddress, searchTerm)} <span className="text-[10px] text-slate-400">({device.ipAllocation === "Reserved DHCP" ? "Reserved" : device.ipAllocation})</span>
-                                </>
-                              ) : (
-                                <span className="text-slate-400 italic font-sans">No IP Assigned</span>
-                              )}
-                            </span>
+
+                          {/* Quick Actions */}
+                          <div className="flex items-center gap-1 shrink-0">
+                            {viewTrashOnly ? (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRestoreDevice(device.id);
+                                  }}
+                                  className="px-1.5 py-0.5 rounded text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 cursor-pointer flex items-center gap-1 text-[10px] font-bold border border-emerald-100 bg-white"
+                                  title="Restore Device"
+                                >
+                                  <RotateCcw className="w-3 h-3" />
+                                  Restore
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeviceToDelete(device);
+                                  }}
+                                  className="px-1.5 py-0.5 rounded text-rose-600 hover:text-rose-800 hover:bg-rose-50 cursor-pointer flex items-center gap-1 text-[10px] font-bold border border-rose-100 bg-white"
+                                  title="Permanently Delete"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  Erase
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenEditModal(device);
+                                  }}
+                                  className="p-1 rounded text-slate-400 hover:text-indigo-600 hover:bg-slate-100 cursor-pointer"
+                                  title="Edit Device Specifications"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeviceToDelete(device);
+                                  }}
+                                  className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 cursor-pointer"
+                                  title="Delete Device Profile"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </>
+                            )}
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
                           </div>
                         </div>
 
-                        {/* Match details for non-visible fields */}
+                        {/* Match details for non-visible fields when searching */}
                         {searchTerm.trim() && (
                           (() => {
                             const q = searchTerm.toLowerCase();
@@ -2148,10 +2225,10 @@ export default function App() {
                             }
                             if (matches.length > 0) {
                               return (
-                                <div className="text-[11px] bg-amber-50/60 text-amber-900 px-2 py-1.5 rounded-lg border border-amber-100/70 flex items-center gap-1.5 flex-wrap">
-                                  <span className="font-bold text-amber-950 uppercase tracking-wider text-[9px]">Matched Criteria:</span>
+                                <div className="text-[10px] bg-amber-50/80 text-amber-900 px-2 py-1 rounded-lg border border-amber-100 flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-bold text-amber-950 uppercase tracking-wider text-[9px]">Matched:</span>
                                   {matches.map((m, idx) => (
-                                    <span key={idx} className="font-medium bg-white px-1.5 py-0.5 rounded-md border border-amber-100 font-mono shadow-2xs">
+                                    <span key={idx} className="font-medium bg-white px-1.5 py-0.5 rounded border border-amber-150 font-mono">
                                       {m.label}: {highlightMatch(m.value, searchTerm)}
                                     </span>
                                   ))}
@@ -2161,84 +2238,6 @@ export default function App() {
                             return null;
                           })()
                         )}
-
-                        {/* Bottom row: Pricing, Comments Counter & Action buttons */}
-                        <div className="flex items-center justify-between border-t border-slate-100 pt-2.5 mt-0.5 text-xs">
-                          <div className="flex items-center gap-3.5 text-slate-500">
-                            {/* Price Metadata */}
-                            <div className="flex items-center gap-1 text-slate-500" title="Estimated Price">
-                              <span className="font-medium text-slate-600">{formatRON(device.price)}</span>
-                            </div>
-                            
-                            {/* Comments Trigger Badge */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedDevice(device);
-                                setActiveTabRight("logs");
-                              }}
-                              className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-slate-600 hover:text-indigo-600 transition-all cursor-pointer group/cmt"
-                              title={`${device.commentCount} comments/logs in history. Click to view detailed history log.`}
-                            >
-                              <MessageSquare className="w-3.5 h-3.5 text-slate-400 group-hover/cmt:text-indigo-500 transition-colors" />
-                              <span className="font-semibold text-[11px] group-hover/cmt:text-indigo-600 transition-colors">{device.commentCount}</span>
-                            </button>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            {viewTrashOnly ? (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRestoreDevice(device.id);
-                                  }}
-                                  className="px-2 py-1 rounded-lg text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 cursor-pointer flex items-center gap-1 text-[11px] font-bold border border-emerald-100 bg-white"
-                                  title="Restore Device from Recycle Bin"
-                                >
-                                  <RotateCcw className="w-3.5 h-3.5" />
-                                  Restore
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDeviceToDelete(device);
-                                  }}
-                                  className="px-2 py-1 rounded-lg text-rose-600 hover:text-rose-800 hover:bg-rose-50 cursor-pointer flex items-center gap-1 text-[11px] font-bold border border-rose-100 bg-white"
-                                  title="Permanently Delete Device"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                  Erase
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleOpenEditModal(device);
-                                  }}
-                                  className="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-50 cursor-pointer"
-                                  title="Edit Device Specifications"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDeviceToDelete(device);
-                                  }}
-                                  className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-50 cursor-pointer"
-                                  title="Delete Device Profile"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </>
-                            )}
-                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
-                          </div>
-                        </div>
                       </div>
                     );
                   })}
@@ -2800,7 +2799,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v1.0.6
+              v1.0.7
             </span>
           </div>
         </div>
