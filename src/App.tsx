@@ -1613,34 +1613,34 @@ export default function App() {
     : filteredDevices;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col text-slate-900 antialiased selection:bg-indigo-100">
+    <div className="min-h-screen bg-slate-950 font-mono flex flex-col text-slate-200 antialiased selection:bg-cyan-900 selection:text-cyan-100">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-sm max-w-sm transition-all transform animate-in fade-in slide-in-from-top-4 duration-300 ${
+        <div className={`fixed top-4 right-4 z-50 flex items-center gap-2.5 px-4 py-3 rounded-lg shadow-xl border text-xs font-mono max-w-sm transition-all transform animate-in fade-in slide-in-from-top-4 duration-300 ${
           toast.type === "success" 
-            ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
-            : "bg-rose-50 border-rose-200 text-rose-800"
+            ? "bg-slate-900 border-emerald-500/60 text-emerald-300" 
+            : "bg-slate-900 border-rose-500/60 text-rose-300"
         }`}>
-          {toast.type === "success" ? <CheckCircle className="w-4 h-4 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 flex-shrink-0" />}
+          {toast.type === "success" ? <CheckCircle className="w-4 h-4 flex-shrink-0 text-emerald-400" /> : <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />}
           <p className="font-medium leading-tight">{toast.message}</p>
         </div>
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-tr from-indigo-600 to-indigo-500 p-2.5 rounded-xl text-white shadow-md shadow-indigo-100">
-              <Cpu className="w-6 h-6" id="header-logo-icon" />
+            <div className="bg-slate-800 p-2 rounded-lg text-cyan-400 border border-slate-700 shadow-inner">
+              <Cpu className="w-5 h-5" id="header-logo-icon" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+              <h1 className="text-lg font-bold tracking-tight text-slate-100 flex items-center gap-2 font-mono">
                 HomeDome
-                <span className="text-[10px] uppercase tracking-wider font-semibold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md border border-indigo-100">
+                <span className="text-[10px] uppercase tracking-wider font-semibold bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800/80">
                   SQLite Asset Manager
                 </span>
               </h1>
-              <p className="text-xs text-slate-500">Track smart home devices, dynamic field configurations & historic comment logs</p>
+              <p className="text-[11px] text-slate-400 font-mono">Track smart home devices, dynamic field configurations & historic comment logs</p>
             </div>
           </div>
 
@@ -1652,42 +1652,42 @@ export default function App() {
                 setSelectedDevice(null);
                 setSelectedDeviceDetails(null);
               }}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer border ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer border ${
                 viewTrashOnly 
-                  ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100" 
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-600 border-transparent"
+                  ? "bg-rose-950/60 border-rose-800 text-rose-300 hover:bg-rose-900/70" 
+                  : "bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"
               }`}
               title={viewTrashOnly ? "Return to active devices" : "View deleted devices in Recycle Bin"}
             >
-              <Trash2 className={`w-4 h-4 ${viewTrashOnly ? "text-rose-600" : "text-slate-500"}`} />
+              <Trash2 className={`w-3.5 h-3.5 ${viewTrashOnly ? "text-rose-400" : "text-slate-400"}`} />
               Recycle Bin
               {devices.filter(d => d.isDeleted).length > 0 && (
-                <span className="ml-0.5 bg-rose-600 text-white rounded-full text-[10px] w-4.5 h-4.5 flex items-center justify-center font-bold">
+                <span className="ml-0.5 bg-rose-600 text-white rounded text-[10px] px-1.5 py-0.2 font-bold font-mono">
                   {devices.filter(d => d.isDeleted).length}
                 </span>
               )}
             </button>
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all cursor-pointer"
               title="Global Predefinitions & Custom fields configuration"
             >
-              <SettingsIcon className="w-4 h-4 text-slate-500" />
+              <SettingsIcon className="w-3.5 h-3.5 text-slate-400" />
               Settings
             </button>
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-xl transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-emerald-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all cursor-pointer"
               title="Export current devices to CSV file"
             >
-              <Download className="w-4 h-4 text-emerald-600" />
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
               Export CSV
             </button>
             <button
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-xl shadow-md hover:shadow-lg hover:shadow-indigo-100 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono font-bold text-slate-950 bg-cyan-500 hover:bg-cyan-400 rounded-lg transition-all cursor-pointer shadow-xs"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               Add Device
             </button>
           </div>
@@ -1695,31 +1695,31 @@ export default function App() {
       </header>
 
       {/* Sub-Navigation Tabs */}
-      <div className="bg-slate-50 border-b border-slate-200 sticky top-[73px] z-20">
+      <div className="bg-slate-900/80 border-b border-slate-800 sticky top-[57px] z-20 backdrop-blur-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setViewMode("list")}
-              className={`py-3 text-sm font-semibold border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
+              className={`py-2.5 text-xs font-mono uppercase tracking-wider border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
                 viewMode === "list"
-                  ? "border-indigo-600 text-indigo-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-cyan-500 text-cyan-400 font-bold"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
-              <ListFilter className="w-4 h-4" />
+              <ListFilter className="w-3.5 h-3.5" />
               Device Catalog
             </button>
             <button
               onClick={() => setViewMode("subnet")}
-              className={`py-3 text-sm font-semibold border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
+              className={`py-2.5 text-xs font-mono uppercase tracking-wider border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
                 viewMode === "subnet"
-                  ? "border-indigo-600 text-indigo-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-cyan-500 text-cyan-400 font-bold"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
-              <NetworkIcon className="w-4 h-4" />
+              <NetworkIcon className="w-3.5 h-3.5" />
               Subnet & IP Map
-              <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+              <span className="bg-cyan-950 border border-cyan-800 text-cyan-400 text-[10px] px-1.5 py-0.2 rounded font-mono font-bold">
                 vLANs
               </span>
             </button>
@@ -1728,17 +1728,17 @@ export default function App() {
           {viewMode === "list" && (
             <button
               onClick={() => setIsFullscreenCatalog(!isFullscreenCatalog)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all cursor-pointer shadow-xs my-2"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded transition-all cursor-pointer my-1.5"
               title={isFullscreenCatalog ? "Collapse view to show details side panel" : "Expand list to full width"}
             >
               {isFullscreenCatalog ? (
                 <>
-                  <Minimize2 className="w-3.5 h-3.5 text-slate-500" />
+                  <Minimize2 className="w-3.5 h-3.5 text-slate-400" />
                   Show Details Panel
                 </>
               ) : (
                 <>
-                  <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                  <Maximize2 className="w-3.5 h-3.5 text-slate-400" />
                   Expand Full Width
                 </>
               )}
@@ -1770,12 +1770,12 @@ export default function App() {
           <section className={`flex-1 flex flex-col gap-4 min-w-0 ${isFullscreenCatalog ? "" : "md:max-w-xl lg:max-w-2xl xl:max-w-3xl"}`}>
           
           {/* Filters Dashboard Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col gap-4">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-3.5 shadow-xs flex flex-col gap-3 font-mono">
             
             {/* Search Input */}
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-400" />
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-3.5 w-3.5 text-slate-500" />
               </span>
               <input
                 type="text"
@@ -1786,7 +1786,7 @@ export default function App() {
                 }}
                 onFocus={() => setShowSuggestions(true)}
                 placeholder="Search by name, serial number, MAC address, IP, Matter code..."
-                className="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-sm placeholder-slate-400 focus:ring-2 focus:ring-indigo-100 outline-hidden transition-all"
+                className="block w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg text-xs font-mono text-slate-200 placeholder-slate-500 outline-hidden transition-all"
               />
               {searchTerm && (
                 <button
@@ -1794,9 +1794,9 @@ export default function App() {
                     setSearchTerm("");
                     setShowSuggestions(false);
                   }}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
 
@@ -1810,14 +1810,14 @@ export default function App() {
                   />
                   
                   {/* Dropdown menu */}
-                  <div className="absolute left-0 right-0 top-full mt-1.5 bg-white rounded-xl border border-slate-200 shadow-xl z-50 overflow-hidden max-h-80 overflow-y-auto">
+                  <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900 rounded-lg border border-slate-700 shadow-2xl z-50 overflow-hidden max-h-80 overflow-y-auto font-mono">
                     {/* Header line */}
-                    <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-100 flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Predictive Matches</span>
-                      <span className="text-[9px] text-slate-400 font-medium font-mono">{predictiveSuggestions.length} items found</span>
+                    <div className="bg-slate-950 px-3 py-1.5 border-b border-slate-800 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Predictive Matches</span>
+                      <span className="text-[9px] text-cyan-400 font-mono">{predictiveSuggestions.length} items found</span>
                     </div>
                     
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-800">
                       {predictiveSuggestions.map((dev) => {
                         const query = searchTerm.toLowerCase();
                         
@@ -1851,11 +1851,11 @@ export default function App() {
                         }
 
                         // Determine status colors for indicator dot
-                        let statusColor = "bg-slate-300";
-                        if (dev.status === "Online") statusColor = "bg-emerald-500";
-                        else if (dev.status === "Offline") statusColor = "bg-rose-500";
-                        else if (dev.status === "Standby") statusColor = "bg-amber-500";
-                        else if (dev.status === "Maintenance") statusColor = "bg-sky-500";
+                        let statusColor = "bg-slate-500";
+                        if (dev.status === "Online") statusColor = "bg-emerald-500 led-glow-emerald";
+                        else if (dev.status === "Offline") statusColor = "bg-rose-500 led-glow-rose";
+                        else if (dev.status === "Standby") statusColor = "bg-amber-500 led-glow-amber";
+                        else if (dev.status === "Maintenance") statusColor = "bg-sky-500 led-glow-sky";
 
                         return (
                           <div
@@ -1866,23 +1866,23 @@ export default function App() {
                               setActiveTabRight("details");
                               setShowSuggestions(false);
                             }}
-                            className="px-3.5 py-2.5 hover:bg-indigo-50/50 cursor-pointer transition-colors flex items-center justify-between gap-3 text-left"
+                            className="px-3 py-2 hover:bg-slate-800/80 cursor-pointer transition-colors flex items-center justify-between gap-3 text-left"
                           >
                             <div className="min-w-0 flex-1">
                               {/* Device Name with Highlight */}
-                              <div className="font-semibold text-slate-800 text-xs sm:text-sm truncate">
+                              <div className="font-semibold text-slate-200 text-xs truncate">
                                 {highlightMatch(dev.name, searchTerm)}
                               </div>
                               
                               {/* Location and Network details */}
-                              <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium mt-0.5 truncate">
-                                <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-sm flex items-center gap-0.5">
-                                  <MapPin className="w-2.5 h-2.5" />
+                              <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono mt-0.5 truncate">
+                                <span className="bg-slate-950 text-slate-300 px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-slate-800">
+                                  <MapPin className="w-2.5 h-2.5 text-slate-500" />
                                   {dev.locationName}
                                 </span>
-                                <span className="text-slate-300">|</span>
-                                <span className="flex items-center gap-0.5">
-                                  <Wifi className="w-2.5 h-2.5" />
+                                <span className="text-slate-700">|</span>
+                                <span className="flex items-center gap-0.5 text-slate-400">
+                                  <Wifi className="w-2.5 h-2.5 text-slate-500" />
                                   {dev.networkName}
                                 </span>
                               </div>
@@ -1891,9 +1891,9 @@ export default function App() {
                               {matchDetails.length > 0 && (
                                 <div className="flex items-center gap-2 flex-wrap mt-1">
                                   {matchDetails.map((m, idx) => (
-                                    <span key={idx} className="inline-flex items-center gap-0.5 text-[9px] bg-slate-50 text-slate-600 px-1 py-0.5 rounded-md border border-slate-150 font-medium">
-                                      <span className="text-slate-400 font-bold uppercase">{m.label}:</span>
-                                      <span className="font-mono">{m.element}</span>
+                                    <span key={idx} className="inline-flex items-center gap-0.5 text-[9px] bg-slate-950 text-slate-300 px-1 py-0.2 rounded border border-slate-800 font-mono">
+                                      <span className="text-slate-500 font-bold uppercase">{m.label}:</span>
+                                      <span className="font-mono text-cyan-400">{m.element}</span>
                                     </span>
                                   ))}
                                 </div>
@@ -1901,11 +1901,11 @@ export default function App() {
                             </div>
 
                             {/* Right block: Status, Interface */}
-                            <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                              <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-md">
+                            <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700 px-1.5 py-0.2 rounded">
                                 {dev.interface}
                               </span>
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-600">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-300">
                                 <span className={`w-1.5 h-1.5 rounded-full ${statusColor}`}></span>
                                 {dev.status}
                               </span>
@@ -1920,13 +1920,13 @@ export default function App() {
             </div>
 
             {/* Collapsible/Grid Dropdown Filters */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 font-mono">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Location</label>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Location</label>
                 <select
                   value={filterLocation}
                   onChange={(e) => setFilterLocation(e.target.value)}
-                  className="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-hidden focus:bg-white"
+                  className="block w-full px-2 py-1.5 bg-slate-950 border border-slate-800 text-slate-200 rounded-lg text-xs outline-hidden focus:border-cyan-500"
                 >
                   <option value="">All Locations</option>
                   {locations.map((loc) => (
@@ -1936,11 +1936,11 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Network</label>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Network</label>
                 <select
                   value={filterNetwork}
                   onChange={(e) => setFilterNetwork(e.target.value)}
-                  className="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-hidden focus:bg-white"
+                  className="block w-full px-2 py-1.5 bg-slate-950 border border-slate-800 text-slate-200 rounded-lg text-xs outline-hidden focus:border-cyan-500"
                 >
                   <option value="">All Networks</option>
                   {networks.map((net) => (
@@ -1950,11 +1950,11 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Interface</label>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Interface</label>
                 <select
                   value={filterInterface}
                   onChange={(e) => setFilterInterface(e.target.value)}
-                  className="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-hidden focus:bg-white"
+                  className="block w-full px-2 py-1.5 bg-slate-950 border border-slate-800 text-slate-200 rounded-lg text-xs outline-hidden focus:border-cyan-500"
                 >
                   <option value="">All Interfaces</option>
                   {interfaces.map((inter) => (
@@ -1964,11 +1964,11 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-hidden focus:bg-white"
+                  className="block w-full px-2 py-1.5 bg-slate-950 border border-slate-800 text-slate-200 rounded-lg text-xs outline-hidden focus:border-cyan-500"
                 >
                   <option value="">All Statuses</option>
                   {statuses.map((st) => (
@@ -1980,15 +1980,15 @@ export default function App() {
 
             {/* Filter tags / active list reset */}
             {(searchTerm || filterLocation || filterNetwork || filterInterface || filterStatus) && (
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
-                <span className="text-slate-500">
+              <div className="flex items-center justify-between border-t border-slate-800 pt-2.5 text-xs font-mono">
+                <span className="text-slate-400">
                   {isPaginated && filteredDevices.length > devicesPerPage ? (
                     <>
-                      Showing <b>{(currentPage - 1) * devicesPerPage + 1} - {Math.min(currentPage * devicesPerPage, filteredDevices.length)}</b> of <b>{filteredDevices.length}</b> filtered devices
+                      Showing <b className="text-slate-200">{(currentPage - 1) * devicesPerPage + 1} - {Math.min(currentPage * devicesPerPage, filteredDevices.length)}</b> of <b className="text-slate-200">{filteredDevices.length}</b> filtered
                     </>
                   ) : (
                     <>
-                      Showing <b>{filteredDevices.length}</b> of <b>{devices.length}</b> devices
+                      Showing <b className="text-slate-200">{filteredDevices.length}</b> of <b className="text-slate-200">{devices.length}</b> devices
                     </>
                   )}
                 </span>
@@ -2000,7 +2000,7 @@ export default function App() {
                     setFilterInterface("");
                     setFilterStatus("");
                   }}
-                  className="text-indigo-600 font-semibold hover:text-indigo-800 cursor-pointer"
+                  className="text-cyan-400 font-bold hover:text-cyan-300 cursor-pointer"
                 >
                   Clear all filters
                 </button>
@@ -2011,27 +2011,27 @@ export default function App() {
           {/* Devices Grid/List */}
           <div className="flex-1 flex flex-col gap-3 min-h-[400px]">
             {isLoading ? (
-              <div className="flex-1 bg-white rounded-2xl border border-slate-200 flex flex-col items-center justify-center p-8">
-                <div className="w-8 h-8 border-3 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
-                <p className="text-sm text-slate-500 mt-3 font-medium">Loading smart devices list...</p>
+              <div className="flex-1 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center p-8 font-mono">
+                <div className="w-7 h-7 border-2 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin"></div>
+                <p className="text-xs text-slate-400 mt-3 font-medium">Loading smart devices list...</p>
               </div>
             ) : filteredDevices.length === 0 ? (
-              <div className="flex-1 bg-white rounded-2xl border border-slate-200 flex flex-col items-center justify-center text-center p-8">
-                <div className="bg-slate-50 p-4 rounded-full text-slate-400 mb-3 border border-slate-100">
-                  <Search className="w-8 h-8" />
+              <div className="flex-1 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center p-8 font-mono">
+                <div className="bg-slate-950 p-3 rounded-lg text-slate-500 mb-3 border border-slate-800">
+                  <Search className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-slate-800 text-base">No devices matched your query</h3>
-                <p className="text-xs text-slate-500 max-w-sm mt-1">Try tweaking your search terms, adjusting dropdown filters, or add a brand new device.</p>
+                <h3 className="font-semibold text-slate-200 text-sm">No devices matched your query</h3>
+                <p className="text-xs text-slate-400 max-w-sm mt-1">Try tweaking search terms, adjusting dropdown filters, or add a brand new device.</p>
                 <button
                   onClick={handleOpenAddModal}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 rounded-lg transition-all cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-950 bg-cyan-500 hover:bg-cyan-400 rounded transition-all cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add New Device
                 </button>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <div className={`grid gap-3 overflow-y-auto max-h-[calc(100vh-340px)] pr-1 ${
+                <div className={`grid gap-2.5 overflow-y-auto max-h-[calc(100vh-340px)] pr-1 ${
                   isFullscreenCatalog 
                     ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
                     : "grid-cols-1"
@@ -2039,21 +2039,21 @@ export default function App() {
                   {paginatedDevices.map((device) => {
                     const isSelected = selectedDevice?.id === device.id;
                     
-                    // Status dot colors
-                    let statusDotColor = "bg-slate-400";
-                    let statusBadgeStyle = "bg-slate-50 text-slate-700 border-slate-200";
+                    // Status dot & badge styles
+                    let statusDotColor = "bg-slate-500";
+                    let statusBadgeStyle = "bg-slate-800 text-slate-300 border-slate-700";
                     if (device.status === "Online") {
-                      statusDotColor = "bg-emerald-500";
-                      statusBadgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                      statusDotColor = "bg-emerald-500 led-glow-emerald";
+                      statusBadgeStyle = "bg-emerald-950/80 text-emerald-300 border-emerald-800/80";
                     } else if (device.status === "Offline") {
-                      statusDotColor = "bg-rose-500";
-                      statusBadgeStyle = "bg-rose-50 text-rose-700 border-rose-100";
+                      statusDotColor = "bg-rose-500 led-glow-rose";
+                      statusBadgeStyle = "bg-rose-950/80 text-rose-300 border-rose-800/80";
                     } else if (device.status === "Standby") {
-                      statusDotColor = "bg-amber-500";
-                      statusBadgeStyle = "bg-amber-50 text-amber-700 border-amber-100";
+                      statusDotColor = "bg-amber-500 led-glow-amber";
+                      statusBadgeStyle = "bg-amber-950/80 text-amber-300 border-amber-800/80";
                     } else if (device.status === "Maintenance") {
-                      statusDotColor = "bg-sky-500";
-                      statusBadgeStyle = "bg-sky-50 text-sky-700 border-sky-100";
+                      statusDotColor = "bg-sky-500 led-glow-sky";
+                      statusBadgeStyle = "bg-sky-950/80 text-sky-300 border-sky-800/80";
                     }
 
                     return (
@@ -2063,61 +2063,61 @@ export default function App() {
                           setSelectedDevice(device);
                           setActiveTabRight("details");
                         }}
-                        className={`group relative bg-white border rounded-xl p-3 cursor-pointer transition-all hover:shadow-xs flex flex-col gap-2 ${
+                        className={`group relative bg-slate-900 border rounded-lg p-2.5 cursor-pointer transition-all flex flex-col gap-1.5 font-mono ${
                           isSelected 
-                            ? "border-indigo-600 ring-2 ring-indigo-50/50 bg-indigo-50/20" 
-                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/30"
+                            ? "border-cyan-500 bg-cyan-950/20 ring-1 ring-cyan-500/40" 
+                            : "border-slate-800 hover:border-slate-700 hover:bg-slate-800/50"
                         }`}
                       >
                         {/* Top Row: Name, Location & Status / Interface Badges */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2 min-w-0">
                             <span className={`w-2 h-2 rounded-full shrink-0 ${statusDotColor}`} title={`Status: ${device.status}`} />
-                            <h4 className="font-semibold text-slate-900 text-sm truncate group-hover:text-indigo-600 transition-colors">
+                            <h4 className="font-semibold text-slate-100 text-xs sm:text-sm truncate group-hover:text-cyan-400 transition-colors">
                               {highlightMatch(device.name, searchTerm)}
                             </h4>
                             {device.locationName && (
-                              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-500 font-medium shrink-0 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-150">
-                                <MapPin className="w-3 h-3 text-slate-400" />
+                              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium shrink-0 bg-slate-950 px-1.5 py-0.2 rounded border border-slate-800">
+                                <MapPin className="w-2.5 h-2.5 text-slate-500" />
                                 <span className="truncate max-w-[110px]">{device.locationName}</span>
                               </span>
                             )}
                           </div>
 
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex items-center gap-1 shrink-0">
                             {/* Interface Badge */}
-                            <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700 px-1.5 py-0.2 rounded">
                               {device.interface}
                             </span>
                             {/* Status Badge */}
-                            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${statusBadgeStyle}`}>
+                            <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.2 rounded border ${statusBadgeStyle}`}>
                               {device.status}
                             </span>
                           </div>
                         </div>
 
                         {/* Bottom Metadata & Actions Row */}
-                        <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
-                          <div className="flex items-center gap-2 text-[11px] min-w-0 truncate">
+                        <div className="flex items-center justify-between gap-2 border-t border-slate-800/80 pt-1.5 text-xs text-slate-400">
+                          <div className="flex items-center gap-2 text-[10px] min-w-0 truncate font-mono">
                             {/* Location for mobile or small layout fallback */}
                             {device.locationName && (
-                              <span className="sm:hidden flex items-center gap-1 text-slate-600 font-medium truncate shrink-0">
-                                <MapPin className="w-3 h-3 text-slate-400" />
+                              <span className="sm:hidden flex items-center gap-1 text-slate-400 font-medium truncate shrink-0">
+                                <MapPin className="w-2.5 h-2.5 text-slate-500" />
                                 <span>{device.locationName}</span>
                               </span>
                             )}
 
                             {/* Network */}
-                            <span className="flex items-center gap-1 text-slate-600 truncate">
-                              <Wifi className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="flex items-center gap-1 text-slate-300 truncate">
+                              <Wifi className="w-2.5 h-2.5 text-slate-500 shrink-0" />
                               <span className="truncate max-w-[120px]">{device.networkName}</span>
                             </span>
 
                             {/* IP Address */}
                             {isIpSupported(device.interface) && device.ipAddress && (
                               <>
-                                <span className="text-slate-300">•</span>
-                                <span className="font-mono text-slate-600 truncate">
+                                <span className="text-slate-700">•</span>
+                                <span className="font-mono text-cyan-400 truncate">
                                   {highlightMatch(device.ipAddress, searchTerm)}
                                 </span>
                               </>
@@ -2132,10 +2132,10 @@ export default function App() {
                                   setSelectedDevice(device);
                                   setActiveTabRight("logs");
                                 }}
-                                className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded text-slate-600 hover:text-indigo-600 transition-all cursor-pointer text-[10px] font-semibold shrink-0"
+                                className="flex items-center gap-1 px-1.5 py-0.2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 rounded text-slate-300 hover:text-cyan-400 transition-all cursor-pointer text-[9px] font-bold shrink-0 font-mono"
                                 title={`${device.commentCount} comments/logs. Click to view history.`}
                               >
-                                <MessageSquare className="w-3 h-3 text-slate-400" />
+                                <MessageSquare className="w-2.5 h-2.5 text-slate-400" />
                                 <span>{device.commentCount}</span>
                               </button>
                             )}
@@ -2150,10 +2150,10 @@ export default function App() {
                                     e.stopPropagation();
                                     handleRestoreDevice(device.id);
                                   }}
-                                  className="px-1.5 py-0.5 rounded text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 cursor-pointer flex items-center gap-1 text-[10px] font-bold border border-emerald-100 bg-white"
+                                  className="px-1.5 py-0.2 rounded text-emerald-400 hover:bg-emerald-950/60 cursor-pointer flex items-center gap-1 text-[9px] font-bold border border-emerald-800 bg-slate-900"
                                   title="Restore Device"
                                 >
-                                  <RotateCcw className="w-3 h-3" />
+                                  <RotateCcw className="w-2.5 h-2.5" />
                                   Restore
                                 </button>
                                 <button
@@ -2161,10 +2161,10 @@ export default function App() {
                                     e.stopPropagation();
                                     setDeviceToDelete(device);
                                   }}
-                                  className="px-1.5 py-0.5 rounded text-rose-600 hover:text-rose-800 hover:bg-rose-50 cursor-pointer flex items-center gap-1 text-[10px] font-bold border border-rose-100 bg-white"
+                                  className="px-1.5 py-0.2 rounded text-rose-400 hover:bg-rose-950/60 cursor-pointer flex items-center gap-1 text-[9px] font-bold border border-rose-800 bg-slate-900"
                                   title="Permanently Delete"
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  <Trash2 className="w-2.5 h-2.5" />
                                   Erase
                                 </button>
                               </>
@@ -2175,24 +2175,24 @@ export default function App() {
                                     e.stopPropagation();
                                     handleOpenEditModal(device);
                                   }}
-                                  className="p-1 rounded text-slate-400 hover:text-indigo-600 hover:bg-slate-100 cursor-pointer"
+                                  className="p-1 rounded text-slate-400 hover:text-cyan-400 hover:bg-slate-800 cursor-pointer"
                                   title="Edit Device Specifications"
                                 >
-                                  <Edit2 className="w-3.5 h-3.5" />
+                                  <Edit2 className="w-3 h-3" />
                                 </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setDeviceToDelete(device);
                                   }}
-                                  className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 cursor-pointer"
+                                  className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer"
                                   title="Delete Device Profile"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="w-3 h-3" />
                                 </button>
                               </>
                             )}
-                            <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+                            <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
                           </div>
                         </div>
 
@@ -2225,10 +2225,10 @@ export default function App() {
                             }
                             if (matches.length > 0) {
                               return (
-                                <div className="text-[10px] bg-amber-50/80 text-amber-900 px-2 py-1 rounded-lg border border-amber-100 flex items-center gap-1.5 flex-wrap">
-                                  <span className="font-bold text-amber-950 uppercase tracking-wider text-[9px]">Matched:</span>
+                                <div className="text-[10px] bg-slate-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800/60 flex items-center gap-1.5 flex-wrap font-mono">
+                                  <span className="font-bold uppercase tracking-wider text-[9px] text-amber-400">Matched:</span>
                                   {matches.map((m, idx) => (
-                                    <span key={idx} className="font-medium bg-white px-1.5 py-0.5 rounded border border-amber-150 font-mono">
+                                    <span key={idx} className="font-medium bg-slate-900 px-1 py-0.2 rounded border border-slate-800 font-mono text-slate-200">
                                       {m.label}: {highlightMatch(m.value, searchTerm)}
                                     </span>
                                   ))}
@@ -2245,26 +2245,26 @@ export default function App() {
 
                 {/* Pagination Controls */}
                 {isPaginated && totalPages > 1 && (
-                  <div className="flex items-center justify-between bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-xs">
+                  <div className="flex items-center justify-between bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-lg font-mono">
                     <button
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
                     >
-                      <ChevronLeft className="w-3.5 h-3.5 text-slate-500" /> Previous
+                      <ChevronLeft className="w-3.5 h-3.5 text-slate-400" /> Previous
                     </button>
                     
-                    <span className="text-xs font-medium text-slate-500">
-                      Page <span className="font-semibold text-slate-800">{currentPage}</span> of <span className="font-semibold text-slate-800">{totalPages}</span>
-                      <span className="text-slate-400 font-normal"> ({filteredDevices.length} total)</span>
+                    <span className="text-xs font-medium text-slate-400">
+                      Page <span className="font-semibold text-slate-200">{currentPage}</span> of <span className="font-semibold text-slate-200">{totalPages}</span>
+                      <span className="text-slate-500 font-normal"> ({filteredDevices.length} total)</span>
                     </span>
                     
                     <button
                       disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
                     >
-                      Next <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                      Next <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </button>
                   </div>
                 )}
@@ -2276,38 +2276,38 @@ export default function App() {
 
         {/* Right Side: Device Detail View & Historic comment logs */}
         {!((viewMode === "subnet" && isFullscreenMap) || (viewMode === "list" && isFullscreenCatalog)) && (
-          <section className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col max-h-[calc(100vh-130px)] md:sticky md:top-[84px]">
+          <section className="flex-1 bg-slate-900 rounded-xl border border-slate-800 shadow-xs overflow-hidden flex flex-col max-h-[calc(100vh-120px)] md:sticky md:top-[70px] font-mono">
           {/* Section Mode Switcher (Tab Bar) */}
-          <div className="flex border-b border-slate-200 bg-slate-50/80 flex-shrink-0">
+          <div className="flex border-b border-slate-800 bg-slate-950 flex-shrink-0">
             <button
               type="button"
               onClick={() => setActiveTabRight("details")}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
+              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer font-mono ${
                 activeTabRight === "details"
-                  ? "border-indigo-600 text-indigo-600 bg-white"
-                  : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/30"
+                  ? "border-cyan-500 text-cyan-400 bg-slate-900"
+                  : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
               }`}
               disabled={!selectedDevice}
               title={selectedDevice ? "View current device specifications" : "Please select a device to see details"}
             >
-              <Cpu className="w-4 h-4" />
+              <Cpu className="w-3.5 h-3.5" />
               <span>Details</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTabRight("logs")}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
+              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer font-mono ${
                 activeTabRight === "logs"
-                  ? "border-indigo-600 text-indigo-600 bg-white"
-                  : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/30"
+                  ? "border-cyan-500 text-cyan-400 bg-slate-900"
+                  : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
               }`}
               disabled={!selectedDevice}
               title={selectedDevice ? "View full maintenance logs and comments history" : "Please select a device to see details"}
             >
-              <Clock className="w-4 h-4" />
+              <Clock className="w-3.5 h-3.5" />
               <span>Log & History</span>
               {selectedDevice && (
-                <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="bg-cyan-950 border border-cyan-800 text-cyan-400 text-[10px] font-bold px-1.5 py-0.2 rounded font-mono">
                   {selectedDevice.commentCount || 0}
                 </span>
               )}
@@ -2315,13 +2315,13 @@ export default function App() {
             <button
               type="button"
               onClick={() => setActiveTabRight("stats")}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
+              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer font-mono ${
                 activeTabRight === "stats"
-                  ? "border-indigo-600 text-indigo-600 bg-white"
-                  : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/30"
+                  ? "border-cyan-500 text-cyan-400 bg-slate-900"
+                  : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
               }`}
             >
-              <BarChart2 className="w-4 h-4" />
+              <BarChart2 className="w-3.5 h-3.5" />
               <span>Statistics</span>
             </button>
           </div>
@@ -2329,41 +2329,41 @@ export default function App() {
           {(activeTabRight === "details" || activeTabRight === "logs") && selectedDevice ? (
             <div className="flex flex-col h-full overflow-hidden animate-in fade-in duration-200">
               {/* Detail Header */}
-              <div className="p-5 border-b border-slate-100 bg-slate-50/60 flex items-start justify-between gap-4 flex-shrink-0">
+              <div className="p-4 border-b border-slate-800 bg-slate-900/90 flex items-start justify-between gap-4 flex-shrink-0">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight">{selectedDevice.name}</h3>
+                    <h3 className="text-base font-bold text-slate-100 tracking-tight font-mono">{selectedDevice.name}</h3>
                     <button
                       onClick={() => handleOpenEditModal(selectedDevice)}
-                      className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-md transition-all cursor-pointer"
+                      className="p-1 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-all cursor-pointer"
                       title="Edit Device Specifications"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Edit2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="font-medium text-slate-700">{selectedDevice.locationName}</span>
-                    <span className="text-slate-300">•</span>
-                    <span className="text-slate-500">Commissioned {formatDate(selectedDevice.commissioningDate)}</span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono mt-1">
+                    <MapPin className="w-3 h-3 text-slate-500" />
+                    <span className="font-medium text-slate-300">{selectedDevice.locationName}</span>
+                    <span className="text-slate-700">•</span>
+                    <span className="text-slate-400">Commissioned {formatDate(selectedDevice.commissioningDate)}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                  <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border ${
-                    selectedDevice.status === "Online" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                    selectedDevice.status === "Offline" ? "bg-rose-50 text-rose-700 border-rose-100" :
-                    selectedDevice.status === "Standby" ? "bg-amber-50 text-amber-700 border-amber-100" :
-                    "bg-sky-50 text-sky-700 border-sky-100"
+                <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded border ${
+                    selectedDevice.status === "Online" ? "bg-emerald-950/80 text-emerald-300 border-emerald-800/80" :
+                    selectedDevice.status === "Offline" ? "bg-rose-950/80 text-rose-300 border-rose-800/80" :
+                    selectedDevice.status === "Standby" ? "bg-amber-950/80 text-amber-300 border-amber-800/80" :
+                    "bg-sky-950/80 text-sky-300 border-sky-800/80"
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                      selectedDevice.status === "Online" ? "bg-emerald-500" :
-                      selectedDevice.status === "Offline" ? "bg-rose-500" :
-                      selectedDevice.status === "Standby" ? "bg-amber-500" : "bg-sky-500"
+                      selectedDevice.status === "Online" ? "bg-emerald-500 led-glow-emerald" :
+                      selectedDevice.status === "Offline" ? "bg-rose-500 led-glow-rose" :
+                      selectedDevice.status === "Standby" ? "bg-amber-500 led-glow-amber" : "bg-sky-500 led-glow-sky"
                     }`}></span>
                     {selectedDevice.status}
                   </span>
-                  <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                  <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800/80">
                     {formatRON(selectedDevice.price)}
                   </span>
                 </div>
@@ -2371,59 +2371,59 @@ export default function App() {
 
               {activeTabRight === "details" ? (
                 /* Scrollable details tab */
-                <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 space-y-5 font-mono">
                   
                   {/* Core Specifications Grid */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Core Specifications</h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Core Specifications</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Serial Number</span>
-                        <span className="text-xs font-mono font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
-                          {selectedDevice.serialNumber ? highlightMatch(selectedDevice.serialNumber, searchTerm) : <span className="text-slate-400 italic font-sans font-normal">Not Provided</span>}
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Serial Number</span>
+                        <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                          {selectedDevice.serialNumber ? highlightMatch(selectedDevice.serialNumber, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Provided</span>}
                         </span>
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">MAC / IEEE Address</span>
-                        <span className="text-xs font-mono font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
-                          {selectedDevice.macAddress ? highlightMatch(selectedDevice.macAddress, searchTerm) : <span className="text-slate-400 italic font-sans font-normal">Not Provided</span>}
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">MAC / IEEE Address</span>
+                        <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                          {selectedDevice.macAddress ? highlightMatch(selectedDevice.macAddress, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Provided</span>}
                         </span>
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Matter Code</span>
-                        <span className="text-xs font-mono font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
-                          {selectedDevice.matterCode ? highlightMatch(selectedDevice.matterCode, searchTerm) : <span className="text-slate-400 italic font-sans font-normal">Not Matter Cert</span>}
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Matter Code</span>
+                        <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                          {selectedDevice.matterCode ? highlightMatch(selectedDevice.matterCode, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Matter Cert</span>}
                         </span>
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Network SSID</span>
-                        <span className="text-xs font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Network SSID</span>
+                        <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {selectedDevice.networkName}
                         </span>
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">IPv4 Address</span>
-                        <span className="text-xs font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">IPv4 Address</span>
+                        <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {!isIpSupported(selectedDevice.interface) ? (
-                            <span className="text-slate-400 italic font-normal">N/A</span>
+                            <span className="text-slate-500 italic font-normal">N/A</span>
                           ) : selectedDevice.ipAddress ? (
-                            <span className="font-mono">{highlightMatch(selectedDevice.ipAddress, searchTerm)} <span className="text-[9px] text-slate-400">({selectedDevice.ipAllocation})</span></span>
+                            <span className="font-mono text-cyan-400">{highlightMatch(selectedDevice.ipAddress, searchTerm)} <span className="text-[9px] text-slate-500">({selectedDevice.ipAllocation})</span></span>
                           ) : (
-                            <span className="text-slate-400 italic font-normal">No Connection</span>
+                            <span className="text-slate-500 italic font-normal">No Connection</span>
                           )}
                         </span>
                       </div>
 
                       <div className="min-w-0 flex flex-col justify-between">
                         <div>
-                          <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">
+                          <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                             {isBatteryPowered(selectedDevice.batteryTypeName) ? "Battery Specification" : "Power Specification"}
                           </span>
-                          <span className="text-xs font-medium text-slate-800 truncate block bg-white px-2 py-1 rounded-md border border-slate-150">
+                          <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                             {selectedDevice.batteryTypeName}
                           </span>
                         </div>
@@ -2431,26 +2431,26 @@ export default function App() {
                           <button
                             onClick={handleLogBatterySwap}
                             disabled={isLoggingBatterySwap}
-                            className="mt-1.5 flex items-center justify-center gap-1.5 px-2 py-1 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-700 hover:text-amber-800 border border-amber-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                            className="mt-1.5 flex items-center justify-center gap-1 px-2 py-0.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 rounded text-[9px] font-bold transition-all cursor-pointer disabled:opacity-50"
                             title="Log a battery swap event for this device"
                           >
-                            <BatteryCharging className={`w-3.5 h-3.5 ${isLoggingBatterySwap ? "animate-spin" : ""}`} />
+                            <BatteryCharging className={`w-3 h-3 ${isLoggingBatterySwap ? "animate-spin" : ""}`} />
                             {isLoggingBatterySwap ? "Logging..." : "Log Battery Swap"}
                           </button>
                         )}
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Hardware Interface</span>
-                        <span className="text-xs font-bold text-slate-700 truncate block bg-slate-100 px-2 py-1 rounded-md border border-slate-200">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Hardware Interface</span>
+                        <span className="text-xs font-bold text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {selectedDevice.interface}
                         </span>
                       </div>
 
-                      <div className="col-span-2 sm:col-span-3 min-w-0 border-t border-slate-150 pt-3 mt-1">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Description / Notes</span>
-                        <div className="text-xs text-slate-700 bg-white p-2.5 rounded-lg border border-slate-150 leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-y-auto">
-                          {selectedDevice.description ? highlightMatch(selectedDevice.description, searchTerm) : <span className="text-slate-400 italic font-normal text-slate-400">No description provided</span>}
+                      <div className="col-span-2 sm:col-span-3 min-w-0 border-t border-slate-800/80 pt-2.5 mt-1">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Description / Notes</span>
+                        <div className="text-xs text-slate-300 bg-slate-900 p-2.5 rounded border border-slate-800 leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-y-auto font-mono">
+                          {selectedDevice.description ? highlightMatch(selectedDevice.description, searchTerm) : <span className="text-slate-500 italic font-normal">No description provided</span>}
                         </div>
                       </div>
                     </div>
@@ -2458,20 +2458,20 @@ export default function App() {
 
                   {/* Device Relationships */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Device Relationships</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Device Relationships</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {/* Outgoing Links (This device links to) */}
-                      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                      <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-2">
                           Linked Devices (Outgoing)
                         </span>
                         {selectedDevice.relatedDevices && selectedDevice.relatedDevices.length > 0 ? (
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                             {selectedDevice.relatedDevices.map((rel) => (
-                              <div key={rel.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-150 shadow-sm hover:border-slate-300 transition-all">
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <div className="p-1.5 bg-indigo-50 border border-indigo-100 rounded-lg shrink-0">
-                                    <Link2 className="w-3.5 h-3.5 text-indigo-600" />
+                              <div key={rel.id} className="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800 hover:border-slate-700 transition-all">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className="p-1 bg-cyan-950 border border-cyan-800/80 rounded shrink-0">
+                                    <Link2 className="w-3 h-3 text-cyan-400" />
                                   </div>
                                   <div className="min-w-0">
                                     <button
@@ -2482,43 +2482,43 @@ export default function App() {
                                           setSelectedDevice(linked);
                                         }
                                       }}
-                                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors text-left flex items-center gap-1 cursor-pointer truncate"
+                                      className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors text-left flex items-center gap-1 cursor-pointer truncate font-mono"
                                     >
                                       <span className="truncate">{rel.name}</span>
-                                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                      <ChevronRight className="w-3 h-3 shrink-0" />
                                     </button>
                                     {rel.serialNumber && (
-                                      <span className="block text-[9px] text-slate-400 font-mono truncate">
+                                      <span className="block text-[9px] text-slate-500 font-mono truncate">
                                         S/N: {rel.serialNumber}
                                       </span>
                                     )}
                                   </div>
                                 </div>
-                                <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-150 px-2 py-0.5 rounded shrink-0">
+                                <span className="text-[9px] text-slate-400 font-mono bg-slate-950 border border-slate-800 px-1.5 py-0.2 rounded shrink-0">
                                   ID: {rel.id}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic py-1">
+                          <div className="text-xs text-slate-500 italic py-1">
                             This device does not link to any other devices.
                           </div>
                         )}
                       </div>
 
                       {/* Incoming Links (Referenced by other devices) */}
-                      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                        <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                      <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-2">
                           Referenced By (Incoming)
                         </span>
                         {selectedDevice.referencedByDevices && selectedDevice.referencedByDevices.length > 0 ? (
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                             {selectedDevice.referencedByDevices.map((rel) => (
-                              <div key={rel.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-150 shadow-sm hover:border-slate-300 transition-all">
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <div className="p-1.5 bg-emerald-50 border border-emerald-100 rounded-lg shrink-0">
-                                    <Link2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <div key={rel.id} className="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800 hover:border-slate-700 transition-all">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className="p-1 bg-emerald-950 border border-emerald-800/80 rounded shrink-0">
+                                    <Link2 className="w-3 h-3 text-emerald-400" />
                                   </div>
                                   <div className="min-w-0">
                                     <button
@@ -2529,26 +2529,26 @@ export default function App() {
                                           setSelectedDevice(linked);
                                         }
                                       }}
-                                      className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors text-left flex items-center gap-1 cursor-pointer truncate"
+                                      className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors text-left flex items-center gap-1 cursor-pointer truncate font-mono"
                                     >
                                       <span className="truncate">{rel.name}</span>
-                                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                      <ChevronRight className="w-3 h-3 shrink-0" />
                                     </button>
                                     {rel.serialNumber && (
-                                      <span className="block text-[9px] text-slate-400 font-mono truncate">
+                                      <span className="block text-[9px] text-slate-500 font-mono truncate">
                                         S/N: {rel.serialNumber}
                                       </span>
                                     )}
                                   </div>
                                 </div>
-                                <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-150 px-2 py-0.5 rounded shrink-0">
+                                <span className="text-[9px] text-slate-400 font-mono bg-slate-950 border border-slate-800 px-1.5 py-0.2 rounded shrink-0">
                                   ID: {rel.id}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic py-1">
+                          <div className="text-xs text-slate-500 italic py-1">
                             No other devices reference this device.
                           </div>
                         )}
@@ -2558,8 +2558,8 @@ export default function App() {
 
                   {/* Custom Dynamics values */}
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                         Custom Configurations
                       </h4>
                       {customFields.length === 0 && (
@@ -2568,7 +2568,7 @@ export default function App() {
                             setIsSettingsOpen(true);
                             setSettingsTab("custom_fields");
                           }}
-                          className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer"
+                          className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"
                         >
                           + Create dynamic field
                         </button>
@@ -2576,18 +2576,17 @@ export default function App() {
                     </div>
 
                     {customFields.length === 0 ? (
-                      <div className="text-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                        <p className="text-xs text-slate-400">No dynamic custom fields configured yet.</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">Add custom fields in settings to track arbitrary parameters like firmware version, warranty details, etc.</p>
+                      <div className="text-center p-3 border border-dashed border-slate-800 rounded-lg bg-slate-950/40">
+                        <p className="text-xs text-slate-500">No dynamic custom fields configured yet.</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2.5">
                         {customFields.map((field) => {
                           const rawValue = selectedDevice.customValues[field.id];
                           return (
-                            <div key={field.id} className="border border-slate-150 bg-white p-2.5 rounded-lg flex flex-col justify-between min-h-[54px]">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase truncate" title={field.name}>{field.name}</span>
-                              <div className="mt-1 text-xs font-medium text-slate-900 truncate">
+                            <div key={field.id} className="border border-slate-800 bg-slate-950/80 p-2.5 rounded-lg flex flex-col justify-between min-h-[50px]">
+                              <span className="text-[9px] font-bold text-slate-500 uppercase truncate" title={field.name}>{field.name}</span>
+                              <div className="mt-1 text-xs font-mono font-medium text-slate-200 truncate">
                                 {renderCustomValue(field.id, rawValue)}
                               </div>
                             </div>
@@ -2598,51 +2597,51 @@ export default function App() {
                   </div>
 
                   {/* Recent Logs Summary Card */}
-                  <div className="border-t border-slate-100 pt-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="border-t border-slate-800 pt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-500" />
                         Recent Log Summary
                       </h4>
                       <button
                         onClick={() => setActiveTabRight("logs")}
-                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 cursor-pointer"
+                        className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         View & Post Comments ({selectedDevice.commentCount}) &rarr;
                       </button>
                     </div>
 
                     {!selectedDeviceDetails ? (
-                      <div className="py-4 flex items-center justify-center">
-                        <div className="w-5 h-5 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
+                      <div className="py-3 flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin"></div>
                       </div>
                     ) : !selectedDeviceDetails.comments || selectedDeviceDetails.comments.length === 0 ? (
-                      <div className="p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-center">
-                        <p className="text-xs text-slate-400">No log entries or comments found.</p>
+                      <div className="p-3 border border-dashed border-slate-800 rounded-lg bg-slate-950/40 text-center">
+                        <p className="text-xs text-slate-500">No log entries or comments found.</p>
                         <button
                           onClick={() => setActiveTabRight("logs")}
-                          className="mt-1 text-[11px] font-semibold text-indigo-600 hover:underline cursor-pointer"
+                          className="mt-1 text-[10px] font-semibold text-cyan-400 hover:underline cursor-pointer"
                         >
                           Write the first note
                         </button>
                       </div>
                     ) : (
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {selectedDeviceDetails.comments.slice(0, 2).map((comment) => {
                           const isSystem = comment.content === "Device profile created." || comment.content === "Device specifications updated.";
                           return (
                             <div 
                               key={comment.id} 
-                              className={`p-3 rounded-xl text-xs border ${
+                              className={`p-2.5 rounded-lg text-xs font-mono border ${
                                 isSystem 
-                                  ? "bg-indigo-50/40 border-indigo-100 text-slate-600" 
-                                  : "bg-white border-slate-150 text-slate-700"
+                                  ? "bg-slate-950 border-cyan-900/60 text-slate-300" 
+                                  : "bg-slate-950 border-slate-800 text-slate-200"
                               }`}
                             >
                               <p className="leading-relaxed line-clamp-2">{comment.content}</p>
-                              <div className="mt-1 flex items-center justify-between text-[9px] text-slate-400">
-                                <span className="font-semibold uppercase tracking-wider">
-                                  {isSystem ? "✨ System Log" : "💬 Comment"}
+                              <div className="mt-1 flex items-center justify-between text-[9px] text-slate-500 font-mono">
+                                <span className="font-bold uppercase tracking-wider text-cyan-400">
+                                  {isSystem ? "System Log" : "Comment"}
                                 </span>
                                 <span>{formatTimestamp(comment.createdAt)}</span>
                               </div>
@@ -2652,7 +2651,7 @@ export default function App() {
                         {selectedDeviceDetails.comments.length > 2 && (
                           <button
                             onClick={() => setActiveTabRight("logs")}
-                            className="w-full text-center py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors cursor-pointer"
+                            className="w-full text-center py-1.5 border border-slate-800 rounded-lg text-xs font-mono text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors cursor-pointer"
                           >
                             Show all {selectedDeviceDetails.comments.length} log entries
                           </button>
@@ -2664,29 +2663,29 @@ export default function App() {
                 </div>
               ) : (
                 /* Scrollable FULL HEIGHT logs & comments tab */
-                <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/30">
-                  <div className="p-4 pb-3 border-b border-slate-150 bg-white flex items-center justify-between flex-shrink-0">
+                <div className="flex-1 flex flex-col overflow-hidden bg-slate-950/40 font-mono">
+                  <div className="p-3 border-b border-slate-800 bg-slate-900 flex items-center justify-between flex-shrink-0">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
-                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
                         Full Maintenance History & Log
                       </h4>
                     </div>
-                    <span className="bg-slate-100 text-slate-600 text-[10px] font-mono px-2 py-0.5 rounded-full border border-slate-200">
+                    <span className="bg-slate-950 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded border border-slate-800">
                       {selectedDeviceDetails?.comments?.length || 0} Entries
                     </span>
                   </div>
 
                   {/* Complete Log List */}
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono">
                     {!selectedDeviceDetails ? (
                       <div className="h-full flex items-center justify-center">
-                        <div className="w-5 h-5 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin"></div>
                       </div>
                     ) : !selectedDeviceDetails.comments || selectedDeviceDetails.comments.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center text-slate-400 text-center py-12 bg-white rounded-2xl border border-slate-100 p-6">
-                        <MessageSquare className="w-8 h-8 mb-2 text-slate-300" />
-                        <p className="text-xs font-medium text-slate-700">No log entries or comments found.</p>
+                      <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center py-12 bg-slate-900 rounded-xl border border-slate-800 p-6">
+                        <MessageSquare className="w-7 h-7 mb-2 text-slate-600" />
+                        <p className="text-xs font-medium text-slate-300">No log entries or comments found.</p>
                         <p className="text-[10px] text-slate-500 mt-0.5 max-w-xs">Use the editor below to document hardware setup, firmware updates, or physical maintenance.</p>
                       </div>
                     ) : (
@@ -2696,25 +2695,25 @@ export default function App() {
                         return (
                           <div 
                             key={comment.id} 
-                            className={`p-4 rounded-xl text-xs border transition-all relative group ${
+                            className={`p-3 rounded-lg text-xs font-mono border transition-all relative group ${
                               isSystem 
-                                ? "bg-indigo-50/40 border-indigo-100 text-slate-700" 
-                                : "bg-white border-slate-150 text-slate-800 shadow-xs"
+                                ? "bg-slate-950 border-cyan-900/60 text-slate-300" 
+                                : "bg-slate-950 border-slate-800 text-slate-200 shadow-xs"
                             }`}
                           >
                             {isConfirming ? (
-                              <div className="flex items-center justify-between bg-rose-50 p-1.5 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[11px]">Delete this entry?</span>
+                              <div className="flex items-center justify-between bg-rose-950/80 p-2 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[11px]">Delete this entry?</span>
                                 <div className="flex gap-1.5">
                                   <button
                                     onClick={() => handleDeleteComment(comment.id)}
-                                    className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold cursor-pointer transition-all shadow-sm"
+                                    className="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Delete
                                   </button>
                                   <button
                                     onClick={() => setCommentIdConfirmDelete(null)}
-                                    className="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     Keep
                                   </button>
@@ -2722,16 +2721,16 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <p className="leading-relaxed whitespace-pre-line pr-6 text-slate-800">{comment.content}</p>
-                                <div className="mt-2.5 flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                                  <span className="font-bold text-[9px] uppercase tracking-wider text-indigo-600">
-                                    {isSystem ? "✨ System Log" : "💬 Comment Note"}
+                                <p className="leading-relaxed whitespace-pre-line pr-6 text-slate-200">{comment.content}</p>
+                                <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 font-medium font-mono">
+                                  <span className="font-bold text-[9px] uppercase tracking-wider text-cyan-400">
+                                    {isSystem ? "System Log" : "Comment Note"}
                                   </span>
                                   <span>{formatTimestamp(comment.createdAt)}</span>
                                 </div>
                                 <button
                                   onClick={() => setCommentIdConfirmDelete(comment.id)}
-                                  className="absolute top-3 right-3 p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                  className="absolute top-2.5 right-2.5 p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                   title="Delete entry"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -2745,14 +2744,14 @@ export default function App() {
                   </div>
 
                   {/* Add comment form */}
-                  <div className="p-4 border-t border-slate-200 bg-white flex-shrink-0">
+                  <div className="p-3 border-t border-slate-800 bg-slate-900 flex-shrink-0 font-mono">
                     <form onSubmit={handleAddComment} className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         <span>Post Status Update / Log Entry</span>
                         <button
                           type="button"
                           onClick={() => setIsLogCommentExpanded(true)}
-                          className="inline-flex items-center gap-1 text-[10px] text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer font-bold uppercase tracking-wider"
+                          className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer font-bold uppercase tracking-wider"
                           title="Expand comments field to larger window"
                         >
                           <Maximize2 className="w-3 h-3" />
@@ -2766,12 +2765,12 @@ export default function App() {
                           placeholder="Add multiple lines of status update or comment to logs..."
                           disabled={isSubmittingComment}
                           rows={2}
-                          className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-50 resize-y min-h-[44px]"
+                          className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded-lg text-xs px-3 py-2 outline-hidden transition-all disabled:opacity-50 resize-y min-h-[44px] font-mono"
                         />
                         <button
                           type="submit"
                           disabled={!newComment.trim() || isSubmittingComment}
-                          className="px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl flex items-center justify-center shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:shadow-none self-end h-[44px] flex-shrink-0 font-bold text-xs"
+                          className="px-4 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-bold rounded-lg flex items-center justify-center transition-all cursor-pointer disabled:opacity-50 self-end h-[44px] flex-shrink-0 text-xs font-mono"
                         >
                           <Send className="w-3.5 h-3.5 mr-1" /> Post
                         </button>
@@ -2792,14 +2791,14 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500">
+      <footer className="bg-slate-950 border-t border-slate-800 py-3.5 mt-8 font-mono">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-400">
           <div>
-            Built with <b>SQLite</b>, <b>Express</b>, <b>React</b> & <b>Tailwind CSS</b>.
+            Built with <b className="text-slate-200">SQLite</b>, <b className="text-slate-200">Express</b>, <b className="text-slate-200">React</b> & <b className="text-slate-200">Tailwind CSS</b>.
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200">
-              v1.0.7
+            <span className="font-mono bg-slate-900 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-800">
+              v1.1.0
             </span>
           </div>
         </div>
@@ -2807,87 +2806,87 @@ export default function App() {
 
       {/* --- SETTINGS SLIDE-OVER PANEL --- */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200 font-mono">
           {/* Backdrop */}
           <div 
             onClick={() => setIsSettingsOpen(false)} 
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
 
           {/* Panel Sheet */}
-          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="relative w-full max-w-md bg-slate-900 h-full shadow-2xl flex flex-col border-l border-slate-800 animate-in slide-in-from-right duration-300">
             {/* Header */}
-            <div className="p-4 border-b border-slate-100 bg-slate-55 flex items-center justify-between">
+            <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <SettingsIcon className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-base">System Settings</h3>
+                <SettingsIcon className="w-4 h-4 text-cyan-400" />
+                <h3 className="font-bold text-slate-100 text-sm tracking-tight font-mono">System Settings</h3>
               </div>
               <button 
                 onClick={() => setIsSettingsOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+                className="p-1 rounded text-slate-400 hover:bg-slate-800 hover:text-slate-200 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Sub-tabs Selection */}
-            <div className="flex flex-wrap border-b border-slate-100 px-2 bg-slate-50/60">
+            <div className="flex flex-wrap border-b border-slate-800 px-2 bg-slate-950/80">
               <button
                 onClick={() => setSettingsTab("locations")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "locations" 
-                    ? "border-indigo-600 text-indigo-650" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Locations
               </button>
               <button
                 onClick={() => setSettingsTab("networks")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "networks" 
-                    ? "border-indigo-600 text-indigo-655" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Networks
               </button>
               <button
                 onClick={() => setSettingsTab("battery_types")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "battery_types" 
-                    ? "border-indigo-600 text-indigo-655" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Batteries
               </button>
               <button
                 onClick={() => setSettingsTab("interfaces")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "interfaces" 
-                    ? "border-indigo-600 text-indigo-655" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Interfaces
               </button>
               <button
                 onClick={() => setSettingsTab("statuses")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "statuses" 
-                    ? "border-indigo-600 text-indigo-655" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Statuses
               </button>
               <button
                 onClick={() => setSettingsTab("custom_fields")}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "custom_fields" 
-                    ? "border-indigo-600 text-indigo-655" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
                 Custom Fields
@@ -2898,10 +2897,10 @@ export default function App() {
                   setResetWarningStep(0);
                   setResetConfirmText("");
                 }}
-                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all ${
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
                   settingsTab === "reset" 
-                    ? "border-rose-600 text-rose-600 bg-rose-50/50" 
-                    : "border-transparent text-rose-500 hover:text-rose-700 hover:bg-rose-50/10"
+                    ? "border-rose-500 text-rose-400 bg-rose-950/30" 
+                    : "border-transparent text-rose-400 hover:text-rose-300 hover:bg-rose-950/20"
                 }`}
               >
                 Reset App
@@ -2909,51 +2908,51 @@ export default function App() {
             </div>
 
             {/* Scrollable Settings Content */}
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto p-4 font-mono">
               
               {/* LOCATIONS TAB */}
               {settingsTab === "locations" && (
                 <div className="space-y-4">
                   <form onSubmit={handleAddLocation} className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-500">Create New Location</label>
+                    <label className="block text-xs font-semibold text-slate-400">Create New Location</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={newLocationName}
                         onChange={(e) => setNewLocationName(e.target.value)}
                         placeholder="e.g. Attic, Dining Room..."
-                        className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-3 py-2 outline-hidden font-mono"
                       />
                       <button
                         type="submit"
                         disabled={!newLocationName.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all"
+                        className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono"
                       >
                         Add
                       </button>
                     </div>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Configured Locations</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Configured Locations</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden">
                       {locations.map((loc) => {
                         const isConfirming = settingToDelete?.type === "location" && settingToDelete?.id === loc.id;
                         return (
-                          <div key={loc.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                          <div key={loc.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all">
                             {isConfirming ? (
-                              <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[10px]">Delete "{loc.name}"?</span>
+                              <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[10px]">Delete "{loc.name}"?</span>
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => handleDeleteLocation(loc.id, loc.name)}
-                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setSettingToDelete(null)}
-                                    className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     No
                                   </button>
@@ -2961,14 +2960,14 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <span className="text-slate-700">{loc.name}</span>
+                                <span className="text-slate-200">{loc.name}</span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-400 italic bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                                     ID: {loc.id}
                                   </span>
                                   <button
                                     onClick={() => setSettingToDelete({ type: "location", id: loc.id, name: loc.name })}
-                                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-all"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                     title="Delete Location"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -2988,45 +2987,45 @@ export default function App() {
               {settingsTab === "networks" && (
                 <div className="space-y-4">
                   <form onSubmit={handleAddNetwork} className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-500">Add New Network</label>
+                    <label className="block text-xs font-semibold text-slate-400">Add New Network</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={newNetworkName}
                         onChange={(e) => setNewNetworkName(e.target.value)}
                         placeholder="e.g. Guest WiFi, Zigbee Extended..."
-                        className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-3 py-2 outline-hidden font-mono"
                       />
                       <button
                         type="submit"
                         disabled={!newNetworkName.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all"
+                        className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono"
                       >
                         Add
                       </button>
                     </div>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Available Networks</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Available Networks</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden">
                       {networks.map((net) => {
                         const isConfirming = settingToDelete?.type === "network" && settingToDelete?.id === net.id;
                         return (
-                          <div key={net.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                          <div key={net.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all">
                             {isConfirming ? (
-                              <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[10px]">Delete "{net.name}"?</span>
+                              <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[10px]">Delete "{net.name}"?</span>
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => handleDeleteNetwork(net.id, net.name)}
-                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setSettingToDelete(null)}
-                                    className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     No
                                   </button>
@@ -3034,17 +3033,17 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <span className="flex items-center gap-1.5 text-slate-700">
-                                  <Wifi className="w-3.5 h-3.5 text-slate-400" />
+                                <span className="flex items-center gap-1.5 text-slate-200">
+                                  <Wifi className="w-3.5 h-3.5 text-slate-500" />
                                   {net.name}
                                 </span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-400 italic bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                                     ID: {net.id}
                                   </span>
                                   <button
                                     onClick={() => setSettingToDelete({ type: "network", id: net.id, name: net.name })}
-                                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-50 cursor-pointer transition-all"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                     title="Delete Network"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -3064,45 +3063,45 @@ export default function App() {
               {settingsTab === "battery_types" && (
                 <div className="space-y-4">
                   <form onSubmit={handleAddBatteryType} className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-500">Create Battery Power Profile</label>
+                    <label className="block text-xs font-semibold text-slate-400">Create Battery Power Profile</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={newBatteryTypeName}
                         onChange={(e) => setNewBatteryTypeName(e.target.value)}
                         placeholder="e.g. CR2450, Rechargeable Pack..."
-                        className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-3 py-2 outline-hidden font-mono"
                       />
                       <button
                         type="submit"
                         disabled={!newBatteryTypeName.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all"
+                        className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono"
                       >
                         Add
                       </button>
                     </div>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Battery specs</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Battery specs</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden">
                       {batteryTypes.map((bat) => {
                         const isConfirming = settingToDelete?.type === "battery_type" && settingToDelete?.id === bat.id;
                         return (
-                          <div key={bat.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                          <div key={bat.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all">
                             {isConfirming ? (
-                              <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[10px]">Delete "{bat.name}"?</span>
+                              <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[10px]">Delete "{bat.name}"?</span>
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => handleDeleteBatteryType(bat.id, bat.name)}
-                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setSettingToDelete(null)}
-                                    className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     No
                                   </button>
@@ -3110,14 +3109,14 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <span className="text-slate-700">{bat.name}</span>
+                                <span className="text-slate-200">{bat.name}</span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-400 italic bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                                     ID: {bat.id}
                                   </span>
                                   <button
                                     onClick={() => setSettingToDelete({ type: "battery_type", id: bat.id, name: bat.name })}
-                                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-50 cursor-pointer transition-all"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                     title="Delete Battery Type"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -3136,26 +3135,26 @@ export default function App() {
               {/* CUSTOM DYNAMIC FIELDS TAB */}
               {settingsTab === "custom_fields" && (
                 <div className="space-y-4">
-                  <form onSubmit={handleAddCustomField} className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Configure Dynamic Asset Parameter</h4>
+                  <form onSubmit={handleAddCustomField} className="space-y-3 bg-slate-950 p-3.5 rounded-lg border border-slate-800">
+                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">Configure Dynamic Asset Parameter</h4>
                     
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Field Name</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Field Name</label>
                       <input
                         type="text"
                         value={newCustomFieldName}
                         onChange={(e) => setNewCustomFieldName(e.target.value)}
                         placeholder="e.g. Firmware Version, Warranty, Is Outdoor..."
-                        className="block w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-xs px-2.5 py-1.5 outline-hidden"
+                        className="block w-full bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded text-xs px-2.5 py-1.5 text-slate-200 outline-hidden font-mono"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Value Type</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Value Type</label>
                       <select
                         value={newCustomFieldType}
                         onChange={(e) => setNewCustomFieldType(e.target.value as any)}
-                        className="block w-full bg-white border border-slate-200 rounded-lg text-xs px-2.5 py-1.5 focus:border-indigo-500 outline-hidden"
+                        className="block w-full bg-slate-900 border border-slate-800 rounded text-xs px-2.5 py-1.5 text-slate-200 focus:border-cyan-500 outline-hidden font-mono"
                       >
                         <option value="text">Text string</option>
                         <option value="number">Numeric value</option>
@@ -3166,37 +3165,37 @@ export default function App() {
                     <button
                       type="submit"
                       disabled={!newCustomFieldName.trim()}
-                      className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-lg cursor-pointer shadow-sm transition-all mt-1"
+                      className="w-full py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono mt-1"
                     >
                       + Create Schema Attribute
                     </button>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Active Dynamic Attributes</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Active Dynamic Attributes</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden">
                       {customFields.length === 0 ? (
-                        <div className="p-4 text-center text-xs text-slate-400 bg-white italic">
+                        <div className="p-4 text-center text-xs text-slate-500 bg-slate-900 italic font-mono">
                           No customized device fields configured yet.
                         </div>
                       ) : (
                         customFields.map((field) => {
                           const isConfirming = settingToDelete?.type === "custom_field" && settingToDelete?.id === field.id;
                           return (
-                            <div key={field.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                            <div key={field.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all font-mono">
                               {isConfirming ? (
-                                <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                  <span className="text-rose-700 font-semibold text-[10px]">Delete "{field.name}"?</span>
+                                <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                  <span className="text-rose-300 font-semibold text-[10px]">Delete "{field.name}"?</span>
                                   <div className="flex gap-1">
                                     <button
                                       onClick={() => handleDeleteCustomField(field.id, field.name)}
-                                      className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                      className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                     >
                                       Yes
                                     </button>
                                     <button
                                       onClick={() => setSettingToDelete(null)}
-                                      className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                      className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                     >
                                       No
                                     </button>
@@ -3204,14 +3203,14 @@ export default function App() {
                                 </div>
                               ) : (
                                 <>
-                                  <span className="text-slate-700">{field.name}</span>
+                                  <span className="text-slate-200">{field.name}</span>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] uppercase font-bold tracking-wider bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md border border-indigo-100">
+                                    <span className="text-[10px] uppercase font-bold tracking-wider bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800/80">
                                       {field.type}
                                     </span>
                                     <button
                                       onClick={() => setSettingToDelete({ type: "custom_field", id: field.id, name: field.name })}
-                                      className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-all"
+                                      className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                       title="Delete Custom Field"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
@@ -3232,45 +3231,45 @@ export default function App() {
               {settingsTab === "interfaces" && (
                 <div className="space-y-4">
                   <form onSubmit={handleAddInterface} className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-500">Create New Connection Interface</label>
+                    <label className="block text-xs font-semibold text-slate-400">Create New Connection Interface</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={newInterfaceName}
                         onChange={(e) => setNewInterfaceName(e.target.value)}
                         placeholder="e.g. LoRaWAN, Cellular, Thread..."
-                        className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-3 py-2 outline-hidden font-mono"
                       />
                       <button
                         type="submit"
                         disabled={!newInterfaceName.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all"
+                        className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono"
                       >
                         Add
                       </button>
                     </div>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Interfaces</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden max-h-[300px] overflow-y-auto">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Interfaces</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden max-h-[300px] overflow-y-auto">
                       {interfaces.map((inter) => {
                         const isConfirming = settingToDelete?.type === "interface" && settingToDelete?.id === inter.id;
                         return (
-                          <div key={inter.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                          <div key={inter.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all">
                             {isConfirming ? (
-                              <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[10px]">Delete "{inter.name}"?</span>
+                              <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[10px]">Delete "{inter.name}"?</span>
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => handleDeleteInterface(inter.id, inter.name)}
-                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setSettingToDelete(null)}
-                                    className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     No
                                   </button>
@@ -3278,14 +3277,14 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <span className="text-slate-700">{inter.name}</span>
+                                <span className="text-slate-200">{inter.name}</span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-400 italic bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                                     ID: {inter.id}
                                   </span>
                                   <button
                                     onClick={() => setSettingToDelete({ type: "interface", id: inter.id, name: inter.name })}
-                                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-50 cursor-pointer transition-all"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                     title="Delete Interface"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -3305,45 +3304,45 @@ export default function App() {
               {settingsTab === "statuses" && (
                 <div className="space-y-4">
                   <form onSubmit={handleAddStatus} className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-500">Create New Device Status</label>
+                    <label className="block text-xs font-semibold text-slate-400">Create New Device Status</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={newStatusName}
                         onChange={(e) => setNewStatusName(e.target.value)}
                         placeholder="e.g. Idle, Calibrating, Error..."
-                        className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        className="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-3 py-2 outline-hidden font-mono"
                       />
                       <button
                         type="submit"
                         disabled={!newStatusName.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all"
+                        className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded cursor-pointer transition-all font-mono"
                       >
                         Add
                       </button>
                     </div>
                   </form>
 
-                  <div className="border-t border-slate-100 pt-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Statuses</h4>
-                    <div className="divide-y divide-slate-100 border border-slate-150 rounded-xl bg-slate-50 overflow-hidden max-h-[300px] overflow-y-auto">
+                  <div className="border-t border-slate-800 pt-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Statuses</h4>
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded bg-slate-950 overflow-hidden max-h-[300px] overflow-y-auto">
                       {statuses.map((st) => {
                         const isConfirming = settingToDelete?.type === "status" && settingToDelete?.id === st.id;
                         return (
-                          <div key={st.id} className="p-2.5 text-xs bg-white font-medium flex items-center justify-between transition-all">
+                          <div key={st.id} className="p-2.5 text-xs bg-slate-900 font-medium flex items-center justify-between transition-all">
                             {isConfirming ? (
-                              <div className="flex items-center justify-between w-full bg-rose-50 p-1 rounded-lg border border-rose-100 animate-in fade-in duration-200">
-                                <span className="text-rose-700 font-semibold text-[10px]">Delete "{st.name}"?</span>
+                              <div className="flex items-center justify-between w-full bg-rose-950/80 p-1.5 rounded border border-rose-800 animate-in fade-in duration-200">
+                                <span className="text-rose-300 font-semibold text-[10px]">Delete "{st.name}"?</span>
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => handleDeleteStatus(st.id, st.name)}
-                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer transition-all"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setSettingToDelete(null)}
-                                    className="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-[10px] font-bold cursor-pointer transition-all"
+                                    className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold cursor-pointer transition-all border border-slate-700"
                                   >
                                     No
                                   </button>
@@ -3351,14 +3350,14 @@ export default function App() {
                               </div>
                             ) : (
                               <>
-                                <span className="text-slate-700">{st.name}</span>
+                                <span className="text-slate-200">{st.name}</span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-400 italic bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                                     ID: {st.id}
                                   </span>
                                   <button
                                     onClick={() => setSettingToDelete({ type: "status", id: st.id, name: st.name })}
-                                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-50 cursor-pointer transition-all"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer transition-all"
                                     title="Delete Status"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -3376,21 +3375,21 @@ export default function App() {
 
               {/* RESET TAB */}
               {settingsTab === "reset" && (
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl border border-rose-100 bg-rose-50/50 flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-rose-700">
-                      <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />
+                <div className="space-y-4 font-mono">
+                  <div className="p-4 rounded border border-rose-900 bg-rose-950/40 flex flex-col gap-3">
+                    <div className="flex items-center gap-2 text-rose-300">
+                      <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0" />
                       <h4 className="font-bold text-xs uppercase tracking-wider">Destructive Operation: System Reset</h4>
                     </div>
-                    <p className="text-xs text-slate-650 leading-relaxed">
+                    <p className="text-xs text-slate-300 leading-relaxed">
                       Resetting the application will completely purge the device catalog from the database. This includes:
                     </p>
-                    <ul className="list-disc pl-4.5 text-xs text-slate-600 space-y-1">
+                    <ul className="list-disc pl-4 text-xs text-slate-400 space-y-1">
                       <li>All registered smart devices</li>
                       <li>Custom-configured asset parameters for those devices</li>
                       <li>All historic comment/activity logs and battery swap history</li>
                     </ul>
-                    <p className="text-xs text-slate-500 italic border-t border-rose-100/60 pt-2.5">
+                    <p className="text-xs text-slate-400 italic border-t border-rose-900/60 pt-2.5">
                       Note: Your system presets (locations, networks, batteries, connection interfaces, statuses, and custom attribute definitions) will remain intact so you don't have to recreate them from scratch.
                     </p>
                   </div>
@@ -3398,7 +3397,7 @@ export default function App() {
                   {resetWarningStep === 0 && (
                     <button
                       onClick={() => setResetWarningStep(1)}
-                      className="w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl cursor-pointer shadow-sm transition-all flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded cursor-pointer transition-all flex items-center justify-center gap-1.5 font-mono"
                     >
                       <Trash2 className="w-4 h-4" />
                       <span>Delete All Devices & Reset App</span>
@@ -3406,18 +3405,18 @@ export default function App() {
                   )}
 
                   {resetWarningStep === 1 && (
-                    <div className="border border-amber-200 bg-amber-50/70 p-4 rounded-xl space-y-3 animate-in fade-in duration-200">
-                      <div className="flex items-center gap-1.5 text-amber-800">
-                        <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 animate-pulse" />
+                    <div className="border border-amber-800 bg-amber-950/60 p-4 rounded space-y-3 animate-in fade-in duration-200">
+                      <div className="flex items-center gap-1.5 text-amber-300">
+                        <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 animate-pulse" />
                         <span className="font-bold text-xs uppercase tracking-wider">⚠️ Warning 1 of 2: Confirm Deletion</span>
                       </div>
-                      <p className="text-xs text-amber-800 leading-normal font-medium">
+                      <p className="text-xs text-amber-200 leading-normal font-medium">
                         Are you sure you want to proceed? This will wipe your entire device catalog. There is no backup or recovery option!
                       </p>
                       <div className="flex gap-2 pt-1">
                         <button
                           onClick={() => setResetWarningStep(2)}
-                          className="flex-1 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg cursor-pointer transition-all"
+                          className="flex-1 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded cursor-pointer transition-all font-mono"
                         >
                           Yes, I understand. Continue
                         </button>
@@ -3426,7 +3425,7 @@ export default function App() {
                             setResetWarningStep(0);
                             setResetConfirmText("");
                           }}
-                          className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer transition-all"
+                          className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded cursor-pointer transition-all border border-slate-700 font-mono"
                         >
                           Cancel
                         </button>
@@ -3435,13 +3434,13 @@ export default function App() {
                   )}
 
                   {resetWarningStep === 2 && (
-                    <div className="border border-rose-200 bg-rose-50/70 p-4 rounded-xl space-y-3.5 animate-in fade-in duration-200">
-                      <div className="flex items-center gap-1.5 text-rose-800">
-                        <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0 animate-bounce" />
+                    <div className="border border-rose-800 bg-rose-950/60 p-4 rounded space-y-3.5 animate-in fade-in duration-200">
+                      <div className="flex items-center gap-1.5 text-rose-300">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 animate-bounce" />
                         <span className="font-bold text-xs uppercase tracking-wider">🚨 Final Warning 2 of 2: Irreversible</span>
                       </div>
-                      <p className="text-xs text-rose-800 font-semibold leading-normal">
-                        This action cannot be undone! To prevent accidental triggers, please type the word <strong className="underline text-rose-900">RESET</strong> in the input field below to unlock the final reset button.
+                      <p className="text-xs text-rose-200 font-semibold leading-normal">
+                        This action cannot be undone! To prevent accidental triggers, please type the word <strong className="underline text-rose-300">RESET</strong> in the input field below to unlock the final reset button.
                       </p>
                       
                       <div className="space-y-2">
@@ -3450,14 +3449,14 @@ export default function App() {
                           value={resetConfirmText}
                           onChange={(e) => setResetConfirmText(e.target.value)}
                           placeholder="Type 'RESET' in uppercase..."
-                          className="w-full bg-white border border-rose-200 focus:border-rose-500 rounded-lg text-xs px-2.5 py-1.5 font-bold outline-hidden text-center placeholder:font-normal placeholder:text-rose-300"
+                          className="w-full bg-slate-950 border border-rose-800 focus:border-rose-500 text-slate-100 rounded text-xs px-2.5 py-1.5 font-bold outline-hidden text-center placeholder:font-normal placeholder:text-rose-500 font-mono"
                         />
                         
                         <div className="flex gap-2">
                           <button
                             onClick={handleResetApplication}
                             disabled={resetConfirmText !== "RESET" || isLoading}
-                            className="flex-1 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-40 text-white text-xs font-bold rounded-lg cursor-pointer transition-all uppercase tracking-wide flex items-center justify-center gap-1"
+                            className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white text-xs font-bold rounded cursor-pointer transition-all uppercase tracking-wide flex items-center justify-center gap-1 font-mono"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Confirm & Wipe All Devices</span>
@@ -3467,7 +3466,7 @@ export default function App() {
                               setResetWarningStep(0);
                               setResetConfirmText("");
                             }}
-                            className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer transition-all"
+                            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded cursor-pointer transition-all border border-slate-700 font-mono"
                           >
                             Abort
                           </button>
@@ -3481,18 +3480,18 @@ export default function App() {
             </div>
 
             {/* CSV Import Footer Section */}
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex flex-col gap-2">
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                <Upload className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="p-4 border-t border-slate-800 bg-slate-950 flex flex-col gap-2 font-mono">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                <Upload className="w-3.5 h-3.5 text-cyan-400" />
                 <span>Import Devices from CSV</span>
               </div>
               <p className="text-[10px] text-slate-400 leading-normal">
                 Upload a CSV file containing your smart devices. Missing locations, networks, battery specifications, statuses, or interfaces will be automatically registered dynamically.
               </p>
-              <label className="flex flex-col items-center justify-center border border-dashed border-slate-200 bg-white hover:bg-slate-50/50 hover:border-indigo-400 p-3 rounded-xl cursor-pointer transition-all shadow-xs">
+              <label className="flex flex-col items-center justify-center border border-dashed border-slate-800 bg-slate-900 hover:bg-slate-850 hover:border-cyan-500 p-3 rounded cursor-pointer transition-all">
                 <div className="flex items-center gap-2">
                   <Upload className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs font-semibold text-slate-600">Select exported CSV file...</span>
+                  <span className="text-xs font-semibold text-slate-300">Select exported CSV file...</span>
                 </div>
                 <input 
                   type="file" 
@@ -3508,64 +3507,64 @@ export default function App() {
 
       {/* --- ADD / EDIT DEVICE MODAL DIALOG --- */}
       {isDeviceModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center animate-in fade-in duration-200 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center animate-in fade-in duration-200 p-4 font-mono">
           {/* Backdrop */}
           <div 
             onClick={() => setIsDeviceModalOpen(false)} 
-            className="absolute inset-0 bg-slate-900/45 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
 
           {/* Modal Container */}
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col border border-slate-200 max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-2xl bg-slate-900 rounded-lg shadow-2xl flex flex-col border border-slate-800 max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Header */}
-            <div className="p-4.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-base">
+                <Cpu className="w-4 h-4 text-cyan-400" />
+                <h3 className="font-bold text-slate-100 text-sm tracking-tight font-mono">
                   {editingDevice ? `Modify Device Profile: ${editingDevice.name}` : "Commission New Smart Device"}
                 </h3>
               </div>
               <button 
                 onClick={() => setIsDeviceModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-slate-700 cursor-pointer"
+                className="p-1 rounded text-slate-400 hover:bg-slate-800 hover:text-slate-200 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Error banner inside form */}
             {formError && (
-              <div className="mx-5 mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <div className="mx-4 mt-3 p-2.5 bg-rose-950/60 border border-rose-800 text-rose-300 rounded text-xs flex items-center gap-2 font-mono">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
                 <span className="font-medium">{formError}</span>
               </div>
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmitDevice} className="flex-1 overflow-y-auto p-5 space-y-5">
+            <form onSubmit={handleSubmitDevice} className="flex-1 overflow-y-auto p-4 space-y-4 font-mono">
               
               {/* SECTION 1: Identity & Location */}
-              <div className="space-y-3.5">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">1. Identity & Context</h4>
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">1. Identity & Context</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1 col-span-1 sm:col-span-2">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Device Name *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Device Name *</label>
                     <input
                       type="text"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
                       placeholder="e.g. Living Room AC, Smart Lock"
                       required
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Device Status *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Device Status *</label>
                     <select
                       value={formStatus}
                       onChange={(e) => setFormStatus(e.target.value)}
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {statuses.map(st => (
                         <option key={st.id} value={st.name}>{st.name}</option>
@@ -3574,11 +3573,11 @@ export default function App() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Location *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Location *</label>
                     <select
                       value={formLocationId}
                       onChange={(e) => setFormLocationId(e.target.value)}
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {locations.map(loc => (
                         <option key={loc.id} value={loc.id}>{loc.name}</option>
@@ -3587,18 +3586,18 @@ export default function App() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Commissioning Date *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Commissioning Date *</label>
                     <input
                       type="date"
                       value={formCommissioningDate}
                       onChange={(e) => setFormCommissioningDate(e.target.value)}
                       required
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Price (RON) *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Price (RON) *</label>
                     <input
                       type="number"
                       step="0.01"
@@ -3606,22 +3605,22 @@ export default function App() {
                       onChange={(e) => setFormPrice(e.target.value)}
                       min="0"
                       required
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden font-mono"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
                   </div>
                 </div>
               </div>
 
               {/* SECTION 2: Connectivity & Network */}
-              <div className="space-y-3.5 pt-1">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">2. Network & Connections</h4>
+              <div className="space-y-3 pt-1">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">2. Network & Connections</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Network *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Network *</label>
                     <select
                       value={formNetworkId}
                       onChange={(e) => setFormNetworkId(e.target.value)}
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {networks.map(net => (
                         <option key={net.id} value={net.id}>{net.name}</option>
@@ -3630,11 +3629,11 @@ export default function App() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Interface *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Interface *</label>
                     <select
                       value={formInterface}
                       onChange={(e) => setFormInterface(e.target.value)}
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {interfaces.map(inter => (
                         <option key={inter.id} value={inter.name}>{inter.name}</option>
@@ -3645,11 +3644,11 @@ export default function App() {
                   {isIpSupported(formInterface) && (
                     <>
                       <div className="space-y-1">
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">IP Allocation *</label>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">IP Allocation *</label>
                         <select
                           value={formIpAllocation}
                           onChange={(e) => setFormIpAllocation(e.target.value)}
-                          className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                          className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                         >
                           <option value="DHCP">DHCP</option>
                           <option value="Reserved DHCP">Reserved DHCP</option>
@@ -3658,52 +3657,52 @@ export default function App() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">IPv4 Address</label>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">IPv4 Address</label>
                         <input
                           type="text"
                           value={formIpAddress}
                           onChange={(e) => setFormIpAddress(e.target.value)}
                           placeholder="e.g. 192.168.1.100"
-                          className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden font-mono"
+                          className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                         />
                       </div>
                     </>
                   )}
 
                   <div className="space-y-1 col-span-1 sm:col-span-2">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">MAC / IEEE Address</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">MAC / IEEE Address</label>
                     <input
                       type="text"
                       value={formMacAddress}
                       onChange={(e) => setFormMacAddress(e.target.value)}
                       placeholder="e.g. AA:BB:CC:DD:EE:FF"
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden font-mono"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
                   </div>
                 </div>
               </div>
 
               {/* SECTION 3: Hardware Specifications */}
-              <div className="space-y-3.5 pt-1">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">3. Hardware Specifications</h4>
+              <div className="space-y-3 pt-1">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">3. Hardware Specifications</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Serial Number</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Serial Number</label>
                     <input
                       type="text"
                       value={formSerialNumber}
                       onChange={(e) => setFormSerialNumber(e.target.value)}
                       placeholder="e.g. SN-99814-A"
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden font-mono"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Battery / Power Type *</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Battery / Power Type *</label>
                     <select
                       value={formBatteryTypeId}
                       onChange={(e) => setFormBatteryTypeId(e.target.value)}
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {batteryTypes.map(bat => (
                         <option key={bat.id} value={bat.id}>{bat.name}</option>
@@ -3714,7 +3713,7 @@ export default function App() {
                       if (!selectedType) return null;
                       const isBattery = isBatteryPowered(selectedType.name);
                       return (
-                        <span className={`block text-[9px] font-semibold leading-tight mt-1 ${isBattery ? "text-slate-400" : "text-amber-700 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100/50"}`}>
+                        <span className={`block text-[9px] font-semibold leading-tight mt-1 ${isBattery ? "text-slate-400" : "text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60"}`}>
                           {isBattery 
                             ? "🔋 Battery-powered device (Battery Swap logs enabled)" 
                             : "🔌 Mains/External powered (No Battery Swap action)"}
@@ -3724,36 +3723,36 @@ export default function App() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Matter Code</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Matter Code</label>
                     <input
                       type="text"
                       value={formMatterCode}
                       onChange={(e) => setFormMatterCode(e.target.value)}
                       placeholder="Format: xxxx-xxx-xxxx"
-                      className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden font-mono"
+                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     />
-                    <span className="block text-[9px] text-slate-400">Matter format: 4-3-4 digits</span>
+                    <span className="block text-[9px] text-slate-500">Matter format: 4-3-4 digits</span>
                   </div>
                 </div>
               </div>
 
               {/* SECTION 4: Dynamic parameters configured by settings */}
               {customFields.length > 0 && (
-                <div className="space-y-3.5 pt-1">
-                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">4. Customized Fields</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-indigo-50/20 p-4 rounded-xl border border-indigo-100/50">
+                <div className="space-y-3 pt-1">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">4. Customized Fields</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950 p-3 rounded border border-slate-800">
                     {customFields.map((field) => {
                       return (
                         <div key={field.id} className="space-y-1">
-                          <label className="block text-[10px] font-bold text-slate-650 uppercase tracking-wider">
-                            {field.name} <span className="text-[8px] text-slate-400 uppercase font-semibold">({field.type})</span>
+                          <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+                            {field.name} <span className="text-[8px] text-slate-500 uppercase font-semibold">({field.type})</span>
                           </label>
 
                           {field.type === "boolean" ? (
                             <select
                               value={formCustomValues[field.id] || "false"}
                               onChange={(e) => setFormCustomValues(prev => ({ ...prev, [field.id]: e.target.value }))}
-                              className="block w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-xs px-3 py-1.5 outline-hidden"
+                              className="block w-full bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded text-xs px-2.5 py-1.5 text-slate-200 outline-hidden font-mono"
                             >
                               <option value="false">No (False)</option>
                               <option value="true">Yes (True)</option>
@@ -3764,7 +3763,7 @@ export default function App() {
                               value={formCustomValues[field.id] || ""}
                               onChange={(e) => setFormCustomValues(prev => ({ ...prev, [field.id]: e.target.value }))}
                               placeholder="e.g. 1.2"
-                              className="block w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-xs px-3 py-1.5 outline-hidden font-mono"
+                              className="block w-full bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded text-xs px-2.5 py-1.5 text-slate-200 outline-hidden font-mono"
                             />
                           ) : (
                             <input
@@ -3772,7 +3771,7 @@ export default function App() {
                               value={formCustomValues[field.id] || ""}
                               onChange={(e) => setFormCustomValues(prev => ({ ...prev, [field.id]: e.target.value }))}
                               placeholder="Type customized text..."
-                              className="block w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-xs px-3 py-1.5 outline-hidden"
+                              className="block w-full bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded text-xs px-2.5 py-1.5 text-slate-200 outline-hidden font-mono"
                             />
                           )}
                         </div>
@@ -3783,28 +3782,28 @@ export default function App() {
               )}
 
               {/* SECTION 5: Device Link & Relationships (Optional) */}
-              <div className="space-y-3.5 pt-1">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">5. Device Relationships</h4>
-                <div className="space-y-3">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Related To (Multiple links permitted)</label>
+              <div className="space-y-3 pt-1">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">5. Device Relationships</h4>
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Related To (Multiple links permitted)</label>
                   
                   {/* Selected Links List */}
                   {formRelatedDeviceIds.length > 0 && (
-                    <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-150">
-                      <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                    <div className="space-y-1.5 bg-slate-950 p-2.5 rounded border border-slate-800">
+                      <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider">
                         Currently Linked Devices ({formRelatedDeviceIds.length})
                       </span>
-                      <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                      <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
                         {formRelatedDeviceIds.map((id) => {
                           const relDevice = devices.find(d => d.id === id);
                           return (
-                            <div key={id} className="flex items-center justify-between bg-white border border-slate-150 rounded-lg px-2.5 py-1.5 shadow-xs">
+                            <div key={id} className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded px-2.5 py-1">
                               <div className="flex items-center gap-2 min-w-0">
-                                <Link2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                                <span className="text-xs font-semibold text-slate-700 truncate">
+                                <Link2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                <span className="text-xs font-semibold text-slate-200 truncate">
                                   {relDevice?.name || `Device #${id}`}
                                 </span>
-                                <span className="text-[9px] text-slate-400 font-mono shrink-0">
+                                <span className="text-[9px] text-slate-500 font-mono shrink-0">
                                   (ID: {id})
                                 </span>
                               </div>
@@ -3813,7 +3812,7 @@ export default function App() {
                                 onClick={() => {
                                   setFormRelatedDeviceIds(prev => prev.filter(item => item !== id));
                                 }}
-                                className="text-[10px] text-slate-400 hover:text-red-500 font-bold transition-colors cursor-pointer shrink-0"
+                                className="text-[10px] text-rose-400 hover:text-rose-300 font-bold transition-colors cursor-pointer shrink-0"
                               >
                                 Disconnect
                               </button>
@@ -3836,9 +3835,9 @@ export default function App() {
                           setIsLinkDropdownOpen(true);
                         }}
                         onFocus={() => setIsLinkDropdownOpen(true)}
-                        className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs pl-8 pr-3 py-2 outline-hidden"
+                        className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs pl-8 pr-3 py-1.5 outline-hidden font-mono"
                       />
-                      <Link2 className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
+                      <Link2 className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-500" />
                     </div>
                     
                     {isLinkDropdownOpen && (
@@ -3847,7 +3846,7 @@ export default function App() {
                           className="fixed inset-0 z-30" 
                           onClick={() => setIsLinkDropdownOpen(false)} 
                         />
-                        <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-40 p-1">
+                        <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-slate-900 border border-slate-800 rounded shadow-xl z-40 p-1">
                           {(() => {
                             const filtered = devices.filter(d => 
                               d.isDeleted !== true &&
@@ -3859,7 +3858,7 @@ export default function App() {
                             
                             if (filtered.length === 0) {
                               return (
-                                <div className="text-xs text-slate-400 p-3 text-center italic">
+                                <div className="text-xs text-slate-500 p-2.5 text-center italic font-mono">
                                   No additional devices found matching "{searchLinkQuery}"
                                 </div>
                               );
@@ -3874,10 +3873,10 @@ export default function App() {
                                   setSearchLinkQuery("");
                                   setIsLinkDropdownOpen(false);
                                 }}
-                                className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 rounded-lg text-slate-700 flex items-center justify-between transition-colors cursor-pointer"
+                                className="w-full text-left px-2.5 py-1.5 text-xs hover:bg-slate-800 rounded text-slate-200 flex items-center justify-between transition-colors cursor-pointer font-mono"
                               >
-                                <div className="font-medium text-slate-800">{d.name}</div>
-                                <div className="text-[10px] text-slate-400 font-mono">
+                                <div className="font-medium text-slate-200">{d.name}</div>
+                                <div className="text-[10px] text-slate-500 font-mono">
                                   {d.serialNumber || `ID: ${d.id}`}
                                 </div>
                               </button>
@@ -3888,23 +3887,23 @@ export default function App() {
                     )}
                   </div>
 
-                  <span className="block text-[9px] text-slate-400">
+                  <span className="block text-[9px] text-slate-500">
                     Establishes associations to other devices in the catalog (e.g., replacement products, parent router, auxiliary sensors, power supply sources).
                   </span>
                 </div>
               </div>
 
               {/* SECTION 6: Description (Optional) */}
-              <div className="space-y-3.5 pt-1">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-1">
-                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">6. Description (Optional)</h4>
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-1">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">6. Description (Optional)</h4>
                   <button
                     type="button"
                     onClick={() => setIsFormCommentExpanded(true)}
-                    className="inline-flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
                     title="Expand description field to larger window"
                   >
-                    <Maximize2 className="w-3.5 h-3.5" />
+                    <Maximize2 className="w-3 h-3" />
                     Expand Field
                   </button>
                 </div>
@@ -3914,23 +3913,23 @@ export default function App() {
                     onChange={(e) => setFormInitialComment(e.target.value)}
                     placeholder="Add optional description, notes, or comments about this device's deployment status, location specific nuances, or setup observations..."
                     rows={3}
-                    className="block w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs px-3 py-2 outline-hidden resize-y min-h-[72px]"
+                    className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden resize-y min-h-[72px] font-mono"
                   />
                 </div>
               </div>
 
               {/* Form Buttons */}
-              <div className="border-t border-slate-100 pt-4 flex items-center justify-end gap-2 bg-white sticky bottom-0 z-10">
+              <div className="border-t border-slate-800 pt-3 flex items-center justify-end gap-2 bg-slate-900 sticky bottom-0 z-10">
                 <button
                   type="button"
                   onClick={() => setIsDeviceModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+                  className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded transition-all cursor-pointer font-mono"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-100 hover:shadow-lg transition-all cursor-pointer"
+                  className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded transition-all cursor-pointer font-mono"
                 >
                   {editingDevice ? "Save Changes" : "Commission Device"}
                 </button>
@@ -3943,25 +3942,25 @@ export default function App() {
 
       {/* --- DELETE DEVICE CONFIRMATION MODAL --- */}
       {deviceToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 font-mono">
           {/* Backdrop */}
           <div 
             onClick={() => setDeviceToDelete(null)} 
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
 
           {/* Modal Container */}
-          <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 p-6 flex flex-col gap-4 animate-in zoom-in-95 duration-200">
+          <div className="relative bg-slate-900 w-full max-w-md rounded-lg shadow-2xl border border-slate-800 p-5 flex flex-col gap-3.5 animate-in zoom-in-95 duration-200">
             {/* Warning Icon & Header */}
-            <div className="flex items-start gap-4">
-              <div className="bg-rose-50 p-3 rounded-full text-rose-600 border border-rose-100 flex-shrink-0">
-                <Trash2 className="w-6 h-6" />
+            <div className="flex items-start gap-3">
+              <div className="bg-rose-950/80 p-2.5 rounded text-rose-400 border border-rose-800 flex-shrink-0">
+                <Trash2 className="w-5 h-5" />
               </div>
-              <div className="space-y-1">
-                <h3 className="font-bold text-slate-900 text-base">
+              <div className="space-y-0.5">
+                <h3 className="font-bold text-slate-100 text-sm tracking-tight font-mono">
                   {deviceToDelete.isDeleted ? "Permanently Delete Device" : "Move Device to Recycle Bin"}
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-[11px] text-slate-400">
                   {deviceToDelete.isDeleted 
                     ? "This action cannot be undone and will delete all associated logs." 
                     : "You can restore this device later from the Recycle Bin."}
@@ -3970,26 +3969,26 @@ export default function App() {
             </div>
 
             {/* Warning Message details */}
-            <div className="bg-rose-50/30 border border-rose-100/50 p-4 rounded-xl text-xs text-slate-700 leading-relaxed">
+            <div className="bg-rose-950/40 border border-rose-900 p-3 rounded text-xs text-slate-300 leading-relaxed font-mono">
               {deviceToDelete.isDeleted ? (
                 <>
-                  Are you sure you want to permanently delete <span className="font-bold text-slate-900">"{deviceToDelete.name}"</span>? 
+                  Are you sure you want to permanently delete <span className="font-bold text-rose-300">"{deviceToDelete.name}"</span>? 
                   This will erase its specifications, dynamic configurations, and comment logs forever.
                 </>
               ) : (
                 <>
-                  Are you sure you want to move <span className="font-bold text-slate-900">"{deviceToDelete.name}"</span> to the Recycle Bin? 
+                  Are you sure you want to move <span className="font-bold text-rose-300">"{deviceToDelete.name}"</span> to the Recycle Bin? 
                   Active statistics and status metrics will exclude this device.
                 </>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2.5 mt-2">
+            <div className="flex items-center justify-end gap-2 mt-1">
               <button
                 type="button"
                 onClick={() => setDeviceToDelete(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+                className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded transition-all cursor-pointer font-mono border border-slate-700"
               >
                 {deviceToDelete.isDeleted ? "No, Keep Device" : "Cancel"}
               </button>
@@ -4002,7 +4001,7 @@ export default function App() {
                     handleDeleteDevice(deviceToDelete.id);
                   }
                 }}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-xs rounded-xl shadow-md shadow-rose-100 hover:shadow-lg transition-all cursor-pointer"
+                className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded transition-all cursor-pointer font-mono"
               >
                 {deviceToDelete.isDeleted ? "Yes, Delete Permanently" : "Yes, Move to Trash"}
               </button>
@@ -4013,50 +4012,50 @@ export default function App() {
 
       {/* --- CSV PREVIEW MODAL --- */}
       {isCsvPreviewOpen && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4 font-mono">
           {/* Backdrop */}
           <div 
             onClick={() => setIsCsvPreviewOpen(false)} 
-            className="absolute inset-0 bg-slate-900/45 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
 
           {/* Modal Container */}
-          <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col border border-slate-200 max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-5xl bg-slate-900 rounded-lg shadow-2xl flex flex-col border border-slate-800 max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Header */}
-            <div className="p-4.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-600 animate-pulse" />
+                <FileText className="w-4 h-4 text-cyan-400 animate-pulse" />
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">
+                  <h3 className="font-bold text-slate-100 text-sm tracking-tight font-mono">
                     Preview CSV Import
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[10px] text-slate-400 font-mono">
                     Verify matched attributes and select devices to include. Missing locations or networks will be registered.
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsCsvPreviewOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-slate-700 cursor-pointer"
+                className="p-1 rounded text-slate-400 hover:bg-slate-800 hover:text-slate-200 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Mappings Banner info */}
-            <div className="bg-indigo-50/50 border-b border-indigo-100/60 p-3.5 px-5 flex items-start gap-2.5 text-xs text-indigo-900">
-              <Sparkles className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+            <div className="bg-slate-950 border-b border-slate-800 p-3 px-4 flex items-start gap-2 text-xs text-slate-300 font-mono">
+              <Sparkles className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
               <div>
-                <span className="font-semibold text-indigo-950">Auto-Mapped Attributes:</span> HomeDome matched <span className="font-bold text-indigo-900 bg-indigo-100/80 px-1.5 py-0.5 rounded-md font-mono">{csvMatchedCount} columns</span> from your CSV. Non-matching columns are ignored.
+                <span className="font-bold text-cyan-400">Auto-Mapped Attributes:</span> HomeDome matched <span className="font-bold text-cyan-400 bg-cyan-950 border border-cyan-800 px-1.5 py-0.5 rounded font-mono">{csvMatchedCount} columns</span> from your CSV. Non-matching columns are ignored.
               </div>
             </div>
 
             {/* Content Table */}
-            <div className="flex-1 overflow-auto p-5">
+            <div className="flex-1 overflow-auto p-4 font-mono">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                    <th className="py-2.5 px-3 text-center w-12">
+                  <tr className="border-b border-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-950">
+                    <th className="py-2 px-2.5 text-center w-10">
                       <input 
                         type="checkbox"
                         checked={csvPreviewItems.length > 0 && csvPreviewItems.every(i => i.selected)}
@@ -4064,24 +4063,24 @@ export default function App() {
                           const checked = e.target.checked;
                           setCsvPreviewItems(prev => prev.map(item => ({ ...item, selected: checked })));
                         }}
-                        className="rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded border-slate-700 bg-slate-950 text-cyan-500 focus:ring-0 w-3.5 h-3.5 cursor-pointer"
                       />
                     </th>
-                    <th className="py-2.5 px-3">Device Name</th>
-                    <th className="py-2.5 px-3">Location</th>
-                    <th className="py-2.5 px-3">Interface</th>
-                    <th className="py-2.5 px-3">IPv4 Address</th>
-                    <th className="py-2.5 px-3">Network</th>
-                    <th className="py-2.5 px-3">Status</th>
-                    <th className="py-2.5 px-3">Specs Info</th>
+                    <th className="py-2 px-2.5">Device Name</th>
+                    <th className="py-2 px-2.5">Location</th>
+                    <th className="py-2 px-2.5">Interface</th>
+                    <th className="py-2 px-2.5">IPv4 Address</th>
+                    <th className="py-2 px-2.5">Network</th>
+                    <th className="py-2 px-2.5">Status</th>
+                    <th className="py-2 px-2.5">Specs Info</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
+                <tbody className="divide-y divide-slate-800 text-xs">
                   {csvPreviewItems.map((item) => {
                     const isIpOk = isIpSupported(item.interface);
                     return (
-                      <tr key={item.id} className={`hover:bg-slate-50/50 transition-colors ${!item.selected ? 'opacity-60 bg-slate-50/30' : ''}`}>
-                        <td className="py-3 px-3 text-center">
+                      <tr key={item.id} className={`hover:bg-slate-800/40 transition-colors ${!item.selected ? 'opacity-40 bg-slate-950/40' : ''}`}>
+                        <td className="py-2 px-2.5 text-center">
                           <input 
                             type="checkbox"
                             checked={item.selected}
@@ -4089,58 +4088,58 @@ export default function App() {
                               const checked = e.target.checked;
                               setCsvPreviewItems(prev => prev.map(i => i.id === item.id ? { ...i, selected: checked } : i));
                             }}
-                            className="rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                            className="rounded border-slate-700 bg-slate-950 text-cyan-500 focus:ring-0 w-3.5 h-3.5 cursor-pointer"
                           />
                         </td>
-                        <td className="py-3 px-3 font-semibold text-slate-800">
+                        <td className="py-2 px-2.5 font-semibold text-slate-200">
                           {item.name}
                         </td>
-                        <td className="py-3 px-3">
+                        <td className="py-2 px-2.5">
                           {item.location ? (
-                            <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-medium border border-amber-100">
+                            <span className="inline-flex items-center gap-1 bg-slate-950 text-amber-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-800">
                               <MapPin className="w-2.5 h-2.5" />
                               {item.location}
                             </span>
                           ) : (
-                            <span className="text-slate-400 italic">Unassigned</span>
+                            <span className="text-slate-500 italic">Unassigned</span>
                           )}
                         </td>
-                        <td className="py-3 px-3">
-                          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-[10px] font-medium border border-slate-200">
+                        <td className="py-2 px-2.5">
+                          <span className="bg-slate-950 text-slate-300 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-800">
                             {item.interface}
                           </span>
                         </td>
-                        <td className="py-3 px-3 font-mono">
+                        <td className="py-2 px-2.5 font-mono">
                           {!isIpOk ? (
-                            <span className="text-slate-400 italic">N/A</span>
+                            <span className="text-slate-500 italic">N/A</span>
                           ) : item.ipAddress ? (
-                            <span>{item.ipAddress} <span className="text-[9px] text-slate-400">({item.ipAllocation})</span></span>
+                            <span className="text-cyan-400">{item.ipAddress} <span className="text-[9px] text-slate-500">({item.ipAllocation})</span></span>
                           ) : (
-                            <span className="text-slate-400 italic">DHCP Assign</span>
+                            <span className="text-slate-500 italic">DHCP Assign</span>
                           )}
                         </td>
-                        <td className="py-3 px-3">
+                        <td className="py-2 px-2.5">
                           {item.network ? (
-                            <span className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full text-[10px] font-medium border border-indigo-100">
+                            <span className="inline-flex items-center gap-1 bg-slate-950 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-800">
                               <Wifi className="w-2.5 h-2.5" />
                               {item.network}
                             </span>
                           ) : (
-                            <span className="text-slate-400 italic">Unassigned</span>
+                            <span className="text-slate-500 italic">Unassigned</span>
                           )}
                         </td>
-                        <td className="py-3 px-3">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                        <td className="py-2 px-2.5">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono border ${
                             item.status?.toLowerCase() === "online" 
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
-                              : "bg-slate-100 text-slate-600 border-slate-200"
+                              ? "bg-emerald-950 text-emerald-400 border-emerald-800" 
+                              : "bg-slate-950 text-slate-400 border-slate-800"
                           }`}>
                             {item.status || "Online"}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-slate-500 text-[11px] space-y-0.5 max-w-xs truncate">
-                          {item.serialNumber && <div>S/N: <span className="font-mono">{item.serialNumber}</span></div>}
-                          {item.macAddress && <div>MAC: <span className="font-mono">{item.macAddress}</span></div>}
+                        <td className="py-2 px-2.5 text-slate-400 text-[10px] space-y-0.5 max-w-xs truncate font-mono">
+                          {item.serialNumber && <div>S/N: <span className="text-slate-200">{item.serialNumber}</span></div>}
+                          {item.macAddress && <div>MAC: <span className="text-slate-200">{item.macAddress}</span></div>}
                           {item.batteryType && <div>Bat: {item.batteryType}</div>}
                           {item.matterCode && <div>Matter: {item.matterCode}</div>}
                           {item.price > 0 && <div>Price: {item.price} RON</div>}
@@ -4153,11 +4152,11 @@ export default function App() {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-              <div className="text-xs text-slate-600 font-medium">
-                Selected: <span className="text-indigo-600 font-bold">{csvPreviewItems.filter(i => i.selected).length}</span> of <span className="font-bold text-slate-700">{csvPreviewItems.length}</span> devices
+            <div className="p-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-between font-mono">
+              <div className="text-xs text-slate-400 font-mono">
+                Selected: <span className="text-cyan-400 font-bold">{csvPreviewItems.filter(i => i.selected).length}</span> of <span className="font-bold text-slate-200">{csvPreviewItems.length}</span> devices
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   disabled={isCsvImporting}
@@ -4165,7 +4164,7 @@ export default function App() {
                     setIsCsvPreviewOpen(false);
                     setCsvPreviewItems([]);
                   }}
-                  className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-1.5 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded transition-all cursor-pointer disabled:opacity-50 font-mono"
                 >
                   Cancel
                 </button>
@@ -4173,11 +4172,11 @@ export default function App() {
                   type="button"
                   disabled={isCsvImporting || csvPreviewItems.filter(i => i.selected).length === 0}
                   onClick={handleConfirmImportCSV}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-100 hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50 font-mono"
                 >
                   {isCsvImporting ? (
                     <>
-                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
                       Importing...
                     </>
                   ) : (
@@ -4192,49 +4191,49 @@ export default function App() {
 
       {/* --- FORM COMMENT EXPAND MODAL --- */}
       {isFormCommentExpanded && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4 font-mono">
           <div 
             onClick={() => setIsFormCommentExpanded(false)} 
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col border border-slate-200 max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-4.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+          <div className="relative w-full max-w-2xl bg-slate-900 rounded-lg shadow-2xl flex flex-col border border-slate-800 max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-600" />
+                <FileText className="w-4 h-4 text-cyan-400" />
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">
+                  <h3 className="font-bold text-slate-100 text-xs font-mono">
                     Device Description / Notes
                   </h3>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                  <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
                     {editingDevice ? `Editing description for: ${editingDevice.name}` : "Drafting initial setup description"}
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsFormCommentExpanded(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-slate-700 cursor-pointer"
+                className="p-1 rounded text-slate-400 hover:bg-slate-800 hover:text-slate-200 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 p-5">
+            <div className="flex-1 p-4">
               <textarea
                 value={formInitialComment}
                 onChange={(e) => setFormInitialComment(e.target.value)}
                 placeholder="Write multiple lines of description, detailed notes, deployment nuances, hardware specifications, or context about this device here..."
                 rows={12}
                 autoFocus
-                className="w-full h-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs p-4 outline-hidden resize-none focus:ring-1 focus:ring-indigo-500 transition-all font-sans leading-relaxed"
+                className="w-full h-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs p-3 outline-hidden resize-none transition-all font-mono leading-relaxed"
               />
             </div>
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-mono">
+            <div className="p-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-500 font-mono text-[10px]">
                 {formInitialComment.length} characters | {formInitialComment.split("\n").filter(Boolean).length} paragraphs
               </span>
               <button
                 type="button"
                 onClick={() => setIsFormCommentExpanded(false)}
-                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded transition-all cursor-pointer font-mono"
               >
                 Apply & Close
               </button>
@@ -4245,50 +4244,50 @@ export default function App() {
 
       {/* --- LOG COMMENT EXPAND MODAL --- */}
       {isLogCommentExpanded && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center animate-in fade-in duration-200 p-4 font-mono">
           <div 
             onClick={() => setIsLogCommentExpanded(false)} 
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-xs cursor-pointer"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs cursor-pointer"
           />
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col border border-slate-200 max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-4.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+          <div className="relative w-full max-w-2xl bg-slate-900 rounded-lg shadow-2xl flex flex-col border border-slate-800 max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-indigo-600" />
+                <MessageSquare className="w-4 h-4 text-cyan-400" />
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">
+                  <h3 className="font-bold text-slate-100 text-xs font-mono">
                     Detailed Device Log / Status Comment
                   </h3>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                  <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
                     {selectedDevice ? `Posting to log of: ${selectedDevice.name}` : "Drafting log message"}
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsLogCommentExpanded(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-slate-700 cursor-pointer"
+                className="p-1 rounded text-slate-400 hover:bg-slate-800 hover:text-slate-200 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 p-5">
+            <div className="flex-1 p-4">
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write multiple lines describing maintenance details, battery swaps, network configuration shifts, or any other dynamic observations..."
                 rows={12}
                 autoFocus
-                className="w-full h-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white rounded-xl text-xs p-4 outline-hidden resize-none focus:ring-1 focus:ring-indigo-500 transition-all font-sans leading-relaxed"
+                className="w-full h-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs p-3 outline-hidden resize-none transition-all font-mono leading-relaxed"
               />
             </div>
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-mono">
+            <div className="p-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-500 font-mono text-[10px]">
                 {newComment.length} characters | {newComment.split("\n").filter(Boolean).length} paragraphs
               </span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsLogCommentExpanded(false)}
-                  className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+                  className="px-3.5 py-1.5 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded transition-all cursor-pointer font-mono"
                 >
                   Cancel
                 </button>
@@ -4299,7 +4298,7 @@ export default function App() {
                     setIsLogCommentExpanded(false);
                     await handleAddComment(e);
                   }}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                  className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded transition-all cursor-pointer font-mono"
                 >
                   Post Comment
                 </button>
