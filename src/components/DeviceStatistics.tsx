@@ -86,6 +86,19 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
   // Sort locations by device count descending
   locationData.sort((a, b) => b.devices - a.devices);
 
+  // Helper to check if network name/SSID applies
+  const isNetworkSupported = (interName: string | null | undefined) => {
+    if (!interName) return false;
+    const lower = interName.toLowerCase();
+    return (
+      lower.includes("wifi") ||
+      lower.includes("wi-fi") ||
+      lower.includes("lan") ||
+      lower.includes("ethernet") ||
+      lower.includes("wlan")
+    );
+  };
+
   // 4. Data for Network Distribution
   const networkData = networks.map(net => {
     const count = devices.filter(d => d.networkId === net.id).length;
@@ -95,7 +108,7 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
     };
   }).filter(item => item.count > 0);
 
-  const unassignedNetworkCount = devices.filter(d => !d.networkId).length;
+  const unassignedNetworkCount = devices.filter(d => !d.networkId && isNetworkSupported(d.interface)).length;
   if (unassignedNetworkCount > 0) {
     networkData.push({
       name: "Unassigned Network",

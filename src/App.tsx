@@ -273,10 +273,10 @@ export default function App() {
     setFormStatus(statuses[0]?.name || "Online");
     setFormSerialNumber("");
     setFormMacAddress("");
-    setFormNetworkId(networks[0]?.id?.toString() || "");
+    const defaultInterface = interfaces[0]?.name || "WiFI";
+    setFormInterface(defaultInterface);
+    setFormNetworkId(isNetworkSupported(defaultInterface) ? (networks[0]?.id?.toString() || "") : "");
     setFormIpAddress("");
-    setFormIpAllocation("DHCP");
-    setFormInterface(interfaces[0]?.name || "WiFI");
     setFormPrice("0");
     setFormCommissioningDate(new Date().toISOString().split("T")[0]);
     setFormBatteryTypeId(batteryTypes[0]?.id?.toString() || "");
@@ -627,7 +627,7 @@ export default function App() {
       status: formStatus,
       serialNumber: formSerialNumber.trim() || null,
       macAddress: formMacAddress.trim() || null,
-      networkId: formNetworkId ? Number(formNetworkId) : null,
+      networkId: isNetworkSupported(formInterface) ? (formNetworkId ? Number(formNetworkId) : null) : null,
       ipAddress: isIpSupported(formInterface) ? (formIpAddress.trim() || null) : null,
       ipAllocation: isIpSupported(formInterface) ? formIpAllocation : "DHCP",
       interface: formInterface,
@@ -886,7 +886,7 @@ export default function App() {
         device.status,
         device.serialNumber || "",
         device.macAddress || "",
-        device.networkName || "Unassigned",
+        isNetworkSupported(device.interface) ? (device.networkName || "Unassigned") : "N/A",
         device.ipAddress || "",
         device.ipAllocation || "",
         device.interface,
@@ -1394,7 +1394,7 @@ export default function App() {
           status: statusVal,
           serialNumber: item.serialNumber || null,
           macAddress: item.macAddress || null,
-          networkId,
+          networkId: isNetworkSupported(interfaceVal) ? networkId : null,
           ipAddress: isIpSupported(interfaceVal) ? (item.ipAddress || null) : null,
           ipAllocation: isIpSupported(interfaceVal) ? item.ipAllocation : "DHCP",
           interface: interfaceVal,
@@ -1498,6 +1498,18 @@ export default function App() {
     if (!interName) return false;
     const lower = interName.toLowerCase();
     return lower === "wifi" || lower === "wi-fi" || lower === "lan" || lower === "wlan";
+  };
+
+  const isNetworkSupported = (interName: string | null | undefined) => {
+    if (!interName) return false;
+    const lower = interName.toLowerCase();
+    return (
+      lower.includes("wifi") ||
+      lower.includes("wi-fi") ||
+      lower.includes("lan") ||
+      lower.includes("ethernet") ||
+      lower.includes("wlan")
+    );
   };
 
   const formatDate = (dateStr: string) => {
@@ -1880,11 +1892,15 @@ export default function App() {
                                   <MapPin className="w-2.5 h-2.5 text-slate-500" />
                                   {dev.locationName}
                                 </span>
-                                <span className="text-slate-700">|</span>
-                                <span className="flex items-center gap-0.5 text-slate-400">
-                                  <Wifi className="w-2.5 h-2.5 text-slate-500" />
-                                  {dev.networkName}
-                                </span>
+                                {isNetworkSupported(dev.interface) && dev.networkName && (
+                                  <>
+                                    <span className="text-slate-700">|</span>
+                                    <span className="flex items-center gap-0.5 text-slate-400">
+                                      <Wifi className="w-2.5 h-2.5 text-slate-500" />
+                                      {dev.networkName}
+                                    </span>
+                                  </>
+                                )}
                               </div>
 
                               {/* Highlighted matched sub-details if any */}
@@ -2108,10 +2124,12 @@ export default function App() {
                             )}
 
                             {/* Network */}
-                            <span className="flex items-center gap-1 text-slate-300 truncate">
-                              <Wifi className="w-2.5 h-2.5 text-slate-500 shrink-0" />
-                              <span className="truncate max-w-[120px]">{device.networkName}</span>
-                            </span>
+                            {isNetworkSupported(device.interface) && device.networkName && (
+                              <span className="flex items-center gap-1 text-slate-300 truncate">
+                                <Wifi className="w-2.5 h-2.5 text-slate-500 shrink-0" />
+                                <span className="truncate max-w-[120px]">{device.networkName}</span>
+                              </span>
+                            )}
 
                             {/* IP Address */}
                             {isIpSupported(device.interface) && device.ipAddress && (
@@ -2401,7 +2419,13 @@ export default function App() {
                       <div className="min-w-0">
                         <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Network SSID</span>
                         <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
-                          {selectedDevice.networkName}
+                          {!isNetworkSupported(selectedDevice.interface) ? (
+                            <span className="text-slate-500 italic font-normal">N/A</span>
+                          ) : selectedDevice.networkName ? (
+                            selectedDevice.networkName
+                          ) : (
+                            <span className="text-slate-500 italic font-normal">Unassigned</span>
+                          )}
                         </span>
                       </div>
 
@@ -2798,7 +2822,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-900 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-800">
-              v1.1.0
+              v1.1.1
             </span>
           </div>
         </div>
@@ -3616,23 +3640,18 @@ export default function App() {
                 <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">2. Network & Connections</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Network *</label>
-                    <select
-                      value={formNetworkId}
-                      onChange={(e) => setFormNetworkId(e.target.value)}
-                      className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
-                    >
-                      {networks.map(net => (
-                        <option key={net.id} value={net.id}>{net.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Interface *</label>
                     <select
                       value={formInterface}
-                      onChange={(e) => setFormInterface(e.target.value)}
+                      onChange={(e) => {
+                        const newInter = e.target.value;
+                        setFormInterface(newInter);
+                        if (!isNetworkSupported(newInter)) {
+                          setFormNetworkId("");
+                        } else if (!formNetworkId && networks.length > 0) {
+                          setFormNetworkId(networks[0].id.toString());
+                        }
+                      }}
                       className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
                     >
                       {interfaces.map(inter => (
@@ -3640,6 +3659,21 @@ export default function App() {
                       ))}
                     </select>
                   </div>
+
+                  {isNetworkSupported(formInterface) && (
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Network *</label>
+                      <select
+                        value={formNetworkId}
+                        onChange={(e) => setFormNetworkId(e.target.value)}
+                        className="block w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-200 rounded text-xs px-2.5 py-1.5 outline-hidden font-mono"
+                      >
+                        {networks.map(net => (
+                          <option key={net.id} value={net.id}>{net.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   {isIpSupported(formInterface) && (
                     <>
@@ -4119,7 +4153,9 @@ export default function App() {
                           )}
                         </td>
                         <td className="py-2 px-2.5">
-                          {item.network ? (
+                          {!isNetworkSupported(item.interface) ? (
+                            <span className="text-slate-500 italic">N/A</span>
+                          ) : item.network ? (
                             <span className="inline-flex items-center gap-1 bg-slate-950 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-800">
                               <Wifi className="w-2.5 h-2.5" />
                               {item.network}
