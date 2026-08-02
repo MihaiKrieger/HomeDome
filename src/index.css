@@ -1,55 +1,206 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Default Catppuccin Macchiato Theme Mappings */
+  --color-slate-950: #181926; /* Crust */
+  --color-slate-900: #1e2030; /* Mantle */
+  --color-slate-850: #24273a; /* Base */
+  --color-slate-800: #363a4f; /* Surface0 */
+  --color-slate-700: #494d64; /* Surface1 */
+  --color-slate-600: #5b6078; /* Surface2 */
+  --color-slate-500: #6e738d; /* Overlay0 */
+  --color-slate-400: #8087a2; /* Overlay1 */
+  --color-slate-300: #939ab7; /* Overlay2 */
+  --color-slate-200: #a5adcb; /* Subtext0 */
+  --color-slate-100: #b8c0e0; /* Subtext1 */
+  --color-slate-50:  #cad3f5; /* Text */
+
+  --color-cyan-500: #8aadf4; /* Catppuccin Blue */
+  --color-cyan-400: #b7bdf8; /* Catppuccin Lavender */
+  --color-cyan-300: #8bd5ca; /* Catppuccin Teal */
+  --color-cyan-600: #7dc4e4; /* Catppuccin Sapphire */
+  --color-cyan-800: #363a4f;
+  --color-cyan-950: #181926;
+
+  --color-emerald-400: #a6da95; /* Catppuccin Green */
+  --color-emerald-500: #a6da95;
+  --color-emerald-800: #363a4f;
+  --color-emerald-950: #1e2030;
+
+  --color-rose-300: #ee99a0;
+  --color-rose-400: #ee99a0; /* Catppuccin Maroon */
+  --color-rose-500: #ed8796; /* Catppuccin Red */
+  --color-rose-600: #ed8796;
+  --color-rose-800: #494d64;
+  --color-rose-900: #363a4f;
+  --color-rose-950: #1e2030;
+
+  --color-amber-300: #eed49f;
+  --color-amber-400: #eed49f; /* Catppuccin Yellow */
+  --color-amber-500: #f5a97f; /* Catppuccin Peach */
+  --color-amber-800: #363a4f;
+  --color-amber-950: #1e2030;
+
+  --color-indigo-400: #c6a0f6; /* Catppuccin Mauve */
+  --color-indigo-500: #c6a0f6;
+  --color-indigo-600: #c6a0f6;
+}
+
+:root, html[data-theme="macchiato"] {
+  --color-slate-950: #181926;
+  --color-slate-900: #1e2030;
+  --color-slate-850: #24273a;
+  --color-slate-800: #363a4f;
+  --color-slate-700: #494d64;
+  --color-slate-600: #5b6078;
+  --color-slate-500: #6e738d;
+  --color-slate-400: #8087a2;
+  --color-slate-300: #939ab7;
+  --color-slate-200: #a5adcb;
+  --color-slate-100: #b8c0e0;
+  --color-slate-50:  #cad3f5;
+
+  --color-cyan-500: #8aadf4;
+  --color-cyan-400: #b7bdf8;
+  --color-cyan-300: #8bd5ca;
+  --color-cyan-600: #7dc4e4;
+  --color-cyan-800: #363a4f;
+  --color-cyan-950: #181926;
+
+  --color-emerald-400: #a6da95;
+  --color-emerald-500: #a6da95;
+  --color-emerald-800: #363a4f;
+  --color-emerald-950: #1e2030;
+
+  --color-rose-300: #ee99a0;
+  --color-rose-400: #ee99a0;
+  --color-rose-500: #ed8796;
+  --color-rose-600: #ed8796;
+  --color-rose-800: #494d64;
+  --color-rose-900: #363a4f;
+  --color-rose-950: #1e2030;
+
+  --color-amber-300: #eed49f;
+  --color-amber-400: #eed49f;
+  --color-amber-500: #f5a97f;
+  --color-amber-800: #363a4f;
+  --color-amber-950: #1e2030;
+
+  --color-indigo-400: #c6a0f6;
+  --color-indigo-500: #c6a0f6;
+  --color-indigo-600: #c6a0f6;
+
+  --glow-emerald: rgba(166, 218, 149, 0.6);
+  --glow-rose: rgba(237, 135, 150, 0.6);
+  --glow-amber: rgba(238, 212, 159, 0.6);
+  --glow-sky: rgba(145, 215, 227, 0.6);
+  --glow-cyan: rgba(138, 173, 244, 0.6);
+
+  color-scheme: dark;
+}
+
+html[data-theme="latte"] {
+  --color-slate-950: #dce0e8; /* Crust */
+  --color-slate-900: #e6e9ef; /* Mantle */
+  --color-slate-850: #eff1f5; /* Base */
+  --color-slate-800: #ccd0da; /* Surface0 */
+  --color-slate-700: #bcc0cc; /* Surface1 */
+  --color-slate-600: #acb0be; /* Surface2 */
+  --color-slate-500: #9ca0b0; /* Overlay0 */
+  --color-slate-400: #6c6f85; /* Subtext0 */
+  --color-slate-300: #5c5f77; /* Subtext1 */
+  --color-slate-200: #4c4f69; /* Text */
+  --color-slate-100: #313244; /* High-contrast text */
+  --color-slate-50:  #20212c; /* Deepest contrast text */
+
+  --color-cyan-500: #1e66f5; /* Catppuccin Latte Blue */
+  --color-cyan-400: #7287fd; /* Catppuccin Latte Lavender */
+  --color-cyan-300: #179299; /* Catppuccin Latte Teal */
+  --color-cyan-600: #209fb5; /* Catppuccin Latte Sapphire */
+  --color-cyan-800: #ccd0da;
+  --color-cyan-950: #e6e9ef;
+
+  --color-emerald-400: #40a02b; /* Catppuccin Latte Green */
+  --color-emerald-500: #40a02b;
+  --color-emerald-800: #ccd0da;
+  --color-emerald-950: #e6e9ef;
+
+  --color-rose-300: #e64553; /* Catppuccin Latte Maroon */
+  --color-rose-400: #d20f39; /* Catppuccin Latte Red */
+  --color-rose-500: #d20f39;
+  --color-rose-600: #d20f39;
+  --color-rose-800: #bcc0cc;
+  --color-rose-900: #ccd0da;
+  --color-rose-950: #e6e9ef;
+
+  --color-amber-300: #df8e1d;
+  --color-amber-400: #df8e1d; /* Catppuccin Latte Yellow */
+  --color-amber-500: #fe640b; /* Catppuccin Latte Peach */
+  --color-amber-800: #ccd0da;
+  --color-amber-950: #e6e9ef;
+
+  --color-indigo-400: #8839ef; /* Catppuccin Latte Mauve */
+  --color-indigo-500: #8839ef;
+  --color-indigo-600: #8839ef;
+
+  --glow-emerald: rgba(64, 160, 43, 0.4);
+  --glow-rose: rgba(210, 15, 57, 0.4);
+  --glow-amber: rgba(223, 142, 29, 0.4);
+  --glow-sky: rgba(4, 165, 229, 0.4);
+  --glow-cyan: rgba(30, 102, 245, 0.4);
+
+  color-scheme: light;
 }
 
 @layer base {
   html, body, #root {
-    background-color: #0b0f17;
-    color: #f1f5f9;
-    color-scheme: dark;
+    background-color: var(--color-slate-850);
+    color: var(--color-slate-200);
+    min-height: 100vh;
   }
 }
 
-/* Custom Scrollbars for Industrial Workbench */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: var(--color-slate-950);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--color-slate-800);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--color-slate-700);
 }
 
-/* Status Glowing LEDs */
+/* Status Glowing LEDs with Catppuccin Colors */
 .led-glow-emerald {
-  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 8px var(--glow-emerald);
 }
 
 .led-glow-rose {
-  box-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+  box-shadow: 0 0 8px var(--glow-rose);
 }
 
 .led-glow-amber {
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 8px var(--glow-amber);
 }
 
 .led-glow-sky {
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 8px var(--glow-sky);
 }
 
 .led-glow-cyan {
-  box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+  box-shadow: 0 0 8px var(--glow-cyan);
 }
+

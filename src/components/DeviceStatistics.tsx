@@ -27,9 +27,12 @@ interface DeviceStatisticsProps {
   devices: Device[];
   locations: Location[];
   networks: Network[];
+  theme?: 'macchiato' | 'latte';
 }
 
-export default function DeviceStatistics({ devices, locations, networks }: DeviceStatisticsProps) {
+export default function DeviceStatistics({ devices, locations, networks, theme = 'macchiato' }: DeviceStatisticsProps) {
+  const isLatte = theme === 'latte';
+
   // 1. Calculations & Metrics
   const totalDevices = devices.length;
 
@@ -57,14 +60,19 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
     value: count
   }));
 
-  const STATUS_COLORS: Record<string, string> = {
-    "Online": "#34d399",       // emerald-400
-    "Offline": "#f43f5e",      // rose-500
-    "Standby": "#fbbf24",      // amber-400
-    "Maintenance": "#38bdf8"   // sky-400
+  const STATUS_COLORS: Record<string, string> = isLatte ? {
+    "Online": "#40a02b",       // ctp-latte green
+    "Offline": "#d20f39",      // ctp-latte red
+    "Standby": "#df8e1d",      // ctp-latte yellow
+    "Maintenance": "#179299"   // ctp-latte teal
+  } : {
+    "Online": "#a6da95",       // ctp-macchiato green
+    "Offline": "#ed8796",      // ctp-macchiato red
+    "Standby": "#eed49f",      // ctp-macchiato yellow
+    "Maintenance": "#8bd5ca"   // ctp-macchiato teal
   };
 
-  const getStatusColor = (status: string) => STATUS_COLORS[status] || "#64748b";
+  const getStatusColor = (status: string) => STATUS_COLORS[status] || (isLatte ? "#7c7f93" : "#6e738d");
 
   // 3. Data for Location Distribution Bar Chart
   const locationData = locations.map(loc => {
@@ -211,8 +219,14 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
                     ))}
                   </Pie>
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', border: '1px solid #334155', fontSize: '12px', color: '#f8fafc' }}
-                    itemStyle={{ fontWeight: '600', color: '#38bdf8' }}
+                    contentStyle={{ 
+                      backgroundColor: isLatte ? '#e6e9ef' : '#1e2030', 
+                      borderRadius: '8px', 
+                      border: isLatte ? '1px solid #ccd0da' : '1px solid #363a4f', 
+                      fontSize: '12px', 
+                      color: isLatte ? '#4c4f69' : '#cad3f5' 
+                    }}
+                    itemStyle={{ fontWeight: '600', color: isLatte ? '#1e66f5' : '#b7bdf8' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -257,16 +271,22 @@ export default function DeviceStatistics({ devices, locations, networks }: Devic
                   layout="vertical"
                   margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
-                  <XAxis type="number" stroke="#64748b" fontSize={10} allowDecimals={false} />
-                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={10} width={120} interval={0} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isLatte ? "#ccd0da" : "#363a4f"} horizontal={false} />
+                  <XAxis type="number" stroke={isLatte ? "#6c6f85" : "#6e738d"} fontSize={10} allowDecimals={false} />
+                  <YAxis dataKey="name" type="category" stroke={isLatte ? "#4c4f69" : "#939ab7"} fontSize={10} width={120} interval={0} />
                   <Tooltip 
-                    cursor={{ fill: '#1e293b' }}
-                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', border: '1px solid #334155', fontSize: '12px', color: '#f8fafc' }}
+                    cursor={{ fill: isLatte ? '#ccd0da' : '#363a4f' }}
+                    contentStyle={{ 
+                      backgroundColor: isLatte ? '#e6e9ef' : '#1e2030', 
+                      borderRadius: '8px', 
+                      border: isLatte ? '1px solid #ccd0da' : '1px solid #363a4f', 
+                      fontSize: '12px', 
+                      color: isLatte ? '#4c4f69' : '#cad3f5' 
+                    }}
                   />
-                  <Bar dataKey="devices" fill="#06b6d4" radius={[0, 4, 4, 0]} maxBarSize={25}>
+                  <Bar dataKey="devices" fill={isLatte ? "#1e66f5" : "#8aadf4"} radius={[0, 4, 4, 0]} maxBarSize={25}>
                     {locationData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill="#06b6d4" />
+                      <Cell key={`cell-${index}`} fill={isLatte ? "#1e66f5" : "#8aadf4"} />
                     ))}
                   </Bar>
                 </BarChart>

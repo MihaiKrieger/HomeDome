@@ -36,7 +36,10 @@ import {
   Maximize2,
   Minimize2,
   ListFilter,
-  Link2
+  Link2,
+  Sun,
+  Moon,
+  Palette
 } from "lucide-react";
 import { Device, Comment, Location, Network, BatteryType, CustomField, DeviceInterface, DeviceStatus } from "./types";
 import DeviceStatistics from "./components/DeviceStatistics";
@@ -101,9 +104,24 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewTrashOnly, setViewTrashOnly] = useState(false);
 
+  // Theme state: 'macchiato' (dark default) or 'latte' (light)
+  const [theme, setTheme] = useState<"macchiato" | "latte">(() => {
+    const saved = localStorage.getItem("homedome-theme");
+    return (saved === "latte" || saved === "macchiato") ? saved : "macchiato";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("homedome-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === "macchiato" ? "latte" : "macchiato");
+  };
+
   // Settings Panel state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [settingsTab, setSettingsTab] = useState<"locations" | "networks" | "battery_types" | "custom_fields" | "interfaces" | "statuses" | "reset">("locations");
+  const [settingsTab, setSettingsTab] = useState<"locations" | "networks" | "battery_types" | "custom_fields" | "interfaces" | "statuses" | "appearance" | "reset">("locations");
   const [newLocationName, setNewLocationName] = useState("");
   const [newNetworkName, setNewNetworkName] = useState("");
   const [newBatteryTypeName, setNewBatteryTypeName] = useState("");
@@ -1679,6 +1697,24 @@ export default function App() {
                 </span>
               )}
             </button>
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all cursor-pointer"
+              title={`Switch theme (Currently: Catppuccin ${theme === "macchiato" ? "Macchiato Dark" : "Latte Light"})`}
+            >
+              {theme === "macchiato" ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">Latte</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="hidden sm:inline">Macchiato</span>
+                </>
+              )}
+            </button>
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all cursor-pointer"
@@ -2060,16 +2096,16 @@ export default function App() {
                     let statusBadgeStyle = "bg-slate-800 text-slate-300 border-slate-700";
                     if (device.status === "Online") {
                       statusDotColor = "bg-emerald-500 led-glow-emerald";
-                      statusBadgeStyle = "bg-emerald-950/80 text-emerald-300 border-emerald-800/80";
+                      statusBadgeStyle = "bg-emerald-950 text-emerald-400 border-emerald-800";
                     } else if (device.status === "Offline") {
                       statusDotColor = "bg-rose-500 led-glow-rose";
-                      statusBadgeStyle = "bg-rose-950/80 text-rose-300 border-rose-800/80";
+                      statusBadgeStyle = "bg-rose-950 text-rose-400 border-rose-800";
                     } else if (device.status === "Standby") {
                       statusDotColor = "bg-amber-500 led-glow-amber";
-                      statusBadgeStyle = "bg-amber-950/80 text-amber-300 border-amber-800/80";
+                      statusBadgeStyle = "bg-amber-950 text-amber-400 border-amber-800";
                     } else if (device.status === "Maintenance") {
                       statusDotColor = "bg-sky-500 led-glow-sky";
-                      statusBadgeStyle = "bg-sky-950/80 text-sky-300 border-sky-800/80";
+                      statusBadgeStyle = "bg-cyan-950 text-cyan-400 border-cyan-800";
                     }
 
                     return (
@@ -2369,10 +2405,10 @@ export default function App() {
 
                 <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded border ${
-                    selectedDevice.status === "Online" ? "bg-emerald-950/80 text-emerald-300 border-emerald-800/80" :
-                    selectedDevice.status === "Offline" ? "bg-rose-950/80 text-rose-300 border-rose-800/80" :
-                    selectedDevice.status === "Standby" ? "bg-amber-950/80 text-amber-300 border-amber-800/80" :
-                    "bg-sky-950/80 text-sky-300 border-sky-800/80"
+                    selectedDevice.status === "Online" ? "bg-emerald-950 text-emerald-400 border-emerald-800" :
+                    selectedDevice.status === "Offline" ? "bg-rose-950 text-rose-400 border-rose-800" :
+                    selectedDevice.status === "Standby" ? "bg-amber-950 text-amber-400 border-amber-800" :
+                    "bg-cyan-950 text-cyan-400 border-cyan-800"
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${
                       selectedDevice.status === "Online" ? "bg-emerald-500 led-glow-emerald" :
@@ -2455,7 +2491,7 @@ export default function App() {
                           <button
                             onClick={handleLogBatterySwap}
                             disabled={isLoggingBatterySwap}
-                            className="mt-1.5 flex items-center justify-center gap-1 px-2 py-0.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 rounded text-[9px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                            className="mt-1.5 flex items-center justify-center gap-1 px-2 py-0.5 bg-amber-950 hover:bg-amber-900 text-amber-400 border border-amber-800 rounded text-[9px] font-bold transition-all cursor-pointer disabled:opacity-50"
                             title="Log a battery swap event for this device"
                           >
                             <BatteryCharging className={`w-3 h-3 ${isLoggingBatterySwap ? "animate-spin" : ""}`} />
@@ -2807,7 +2843,7 @@ export default function App() {
 
             </div>
           ) : (
-            <DeviceStatistics devices={devices.filter(d => !d.isDeleted)} locations={locations} networks={networks} />
+            <DeviceStatistics devices={devices.filter(d => !d.isDeleted)} locations={locations} networks={networks} theme={theme} />
           )}
         </section>
         )}
@@ -2822,7 +2858,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-900 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-800">
-              v1.1.1
+              v1.2.0
             </span>
           </div>
         </div>
@@ -2916,6 +2952,16 @@ export default function App() {
                 Custom Fields
               </button>
               <button
+                onClick={() => setSettingsTab("appearance")}
+                className={`px-3 py-2 text-xs font-bold border-b-2 tracking-wide cursor-pointer transition-all font-mono ${
+                  settingsTab === "appearance" 
+                    ? "border-cyan-500 text-cyan-400 bg-slate-900" 
+                    : "border-transparent text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Appearance
+              </button>
+              <button
                 onClick={() => {
                   setSettingsTab("reset");
                   setResetWarningStep(0);
@@ -2934,6 +2980,85 @@ export default function App() {
             {/* Scrollable Settings Content */}
             <div className="flex-1 overflow-y-auto p-4 font-mono">
               
+              {/* APPEARANCE TAB */}
+              {settingsTab === "appearance" && (
+                <div className="space-y-4 font-mono">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1 flex items-center gap-2">
+                      <Palette className="w-3.5 h-3.5 text-cyan-400" />
+                      Catppuccin Color Theme
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mb-4">Select your preferred Catppuccin color profile for HomeDome.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {/* Macchiato Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("macchiato")}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        theme === "macchiato"
+                          ? "bg-slate-950 border-cyan-500 ring-1 ring-cyan-500/50 shadow-md"
+                          : "bg-slate-950/50 border-slate-800 hover:border-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Moon className="w-4 h-4 text-cyan-400" />
+                          <span className="text-xs font-bold text-slate-100">Catppuccin Macchiato</span>
+                          <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">Dark</span>
+                        </div>
+                        {theme === "macchiato" && (
+                          <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 border border-cyan-800 px-2 py-0.5 rounded">Active</span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 mb-3">Soothing dark flavor with deep crust/mantle backgrounds and warm pastel highlights.</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-[#181926] border border-slate-700 inline-block" title="Crust"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#1e2030] border border-slate-700 inline-block" title="Mantle"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#24273a] border border-slate-700 inline-block" title="Base"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#8aadf4] inline-block" title="Blue"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#a6da95] inline-block" title="Green"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#ed8796] inline-block" title="Red"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#c6a0f6] inline-block" title="Mauve"></span>
+                      </div>
+                    </button>
+
+                    {/* Latte Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("latte")}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        theme === "latte"
+                          ? "bg-slate-950 border-cyan-500 ring-1 ring-cyan-500/50 shadow-md"
+                          : "bg-slate-950/50 border-slate-800 hover:border-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Sun className="w-4 h-4 text-amber-500" />
+                          <span className="text-xs font-bold text-slate-100">Catppuccin Latte</span>
+                          <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">Light</span>
+                        </div>
+                        {theme === "latte" && (
+                          <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 border border-cyan-800 px-2 py-0.5 rounded">Active</span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 mb-3">Light clean flavor with high-contrast text and vibrant pastel accent palette.</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-[#dce0e8] border border-slate-400 inline-block" title="Crust"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#e6e9ef] border border-slate-400 inline-block" title="Mantle"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#eff1f5] border border-slate-400 inline-block" title="Base"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#1e66f5] inline-block" title="Blue"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#40a02b] inline-block" title="Green"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#d20f39] inline-block" title="Red"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#8839ef] inline-block" title="Mauve"></span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* LOCATIONS TAB */}
               {settingsTab === "locations" && (
                 <div className="space-y-4">
