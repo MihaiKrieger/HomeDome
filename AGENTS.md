@@ -25,8 +25,10 @@ This file serves as a comprehensive developer guide and instruction manual for A
   - **Start:** `npm run start` runs `node dist/server.cjs`.
 
 ### 2. Frontend Structure (`src/App.tsx`, `src/types.ts`)
-- **Single-Page Application:** The UI is contained primarily in `src/App.tsx` with modal dialogs, tab views, and interactive drawer overlays.
+- **Single-Page Application:** The UI is contained primarily in `src/App.tsx` with modal dialogs, primary navigation views ("Device Catalog", "Subnet & IP Map VLANS", "Statistics"), and interactive drawer overlays.
+- **Catppuccin Themes:** Supports `macchiato` (dark default), `mocha` (deep dark), and `latte` (light) color themes configured via CSS variables (`data-theme`).
 - **Type Definitions:** All shared interfaces (`Device`, `DeviceRelation`, `Location`, `Network`, `BatteryType`, `CustomField`) are defined in `src/types.ts`.
+- **Detail Inspection & Quick Actions:** The device details panel provides comprehensive read-only parameter inspection with quick clipboard copy capabilities (S/N, MAC, IP, Matter Code, Notes, and Full Summary) without requiring edit mode.
 
 ---
 

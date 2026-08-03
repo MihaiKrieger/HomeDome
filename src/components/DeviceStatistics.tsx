@@ -27,11 +27,12 @@ interface DeviceStatisticsProps {
   devices: Device[];
   locations: Location[];
   networks: Network[];
-  theme?: 'macchiato' | 'latte';
+  theme?: 'macchiato' | 'latte' | 'mocha';
 }
 
 export default function DeviceStatistics({ devices, locations, networks, theme = 'macchiato' }: DeviceStatisticsProps) {
   const isLatte = theme === 'latte';
+  const isMocha = theme === 'mocha';
 
   // 1. Calculations & Metrics
   const totalDevices = devices.length;
@@ -65,6 +66,11 @@ export default function DeviceStatistics({ devices, locations, networks, theme =
     "Offline": "#d20f39",      // ctp-latte red
     "Standby": "#df8e1d",      // ctp-latte yellow
     "Maintenance": "#179299"   // ctp-latte teal
+  } : isMocha ? {
+    "Online": "#a6e3a1",       // ctp-mocha green
+    "Offline": "#f38ba8",      // ctp-mocha red
+    "Standby": "#f9e2af",      // ctp-mocha yellow
+    "Maintenance": "#94e2d5"   // ctp-mocha teal
   } : {
     "Online": "#a6da95",       // ctp-macchiato green
     "Offline": "#ed8796",      // ctp-macchiato red

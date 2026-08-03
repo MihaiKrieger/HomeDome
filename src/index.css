@@ -156,6 +156,59 @@ html[data-theme="latte"] {
   color-scheme: light;
 }
 
+html[data-theme="mocha"] {
+  --color-slate-950: #11111b; /* Crust */
+  --color-slate-900: #181825; /* Mantle */
+  --color-slate-850: #1e1e2e; /* Base */
+  --color-slate-800: #313244; /* Surface0 */
+  --color-slate-700: #45475a; /* Surface1 */
+  --color-slate-600: #585b70; /* Surface2 */
+  --color-slate-500: #6c7086; /* Overlay0 */
+  --color-slate-400: #7f849c; /* Overlay1 */
+  --color-slate-300: #9399b2; /* Overlay2 */
+  --color-slate-200: #a6adc8; /* Subtext0 */
+  --color-slate-100: #bac2de; /* Subtext1 */
+  --color-slate-50:  #cdd6f4; /* Text */
+
+  --color-cyan-500: #89b4fa; /* Catppuccin Mocha Blue */
+  --color-cyan-400: #b4befe; /* Catppuccin Mocha Lavender */
+  --color-cyan-300: #94e2d5; /* Catppuccin Mocha Teal */
+  --color-cyan-600: #74c7ec; /* Catppuccin Mocha Sapphire */
+  --color-cyan-800: #313244;
+  --color-cyan-950: #11111b;
+
+  --color-emerald-400: #a6e3a1; /* Catppuccin Mocha Green */
+  --color-emerald-500: #a6e3a1;
+  --color-emerald-800: #313244;
+  --color-emerald-950: #181825;
+
+  --color-rose-300: #eba0ac; /* Catppuccin Mocha Maroon */
+  --color-rose-400: #eba0ac;
+  --color-rose-500: #f38ba8; /* Catppuccin Mocha Red */
+  --color-rose-600: #f38ba8;
+  --color-rose-800: #45475a;
+  --color-rose-900: #313244;
+  --color-rose-950: #181825;
+
+  --color-amber-300: #f9e2af;
+  --color-amber-400: #f9e2af; /* Catppuccin Mocha Yellow */
+  --color-amber-500: #fab387; /* Catppuccin Mocha Peach */
+  --color-amber-800: #313244;
+  --color-amber-950: #181825;
+
+  --color-indigo-400: #cba6f7; /* Catppuccin Mocha Mauve */
+  --color-indigo-500: #cba6f7;
+  --color-indigo-600: #cba6f7;
+
+  --glow-emerald: rgba(166, 227, 161, 0.6);
+  --glow-rose: rgba(243, 139, 168, 0.6);
+  --glow-amber: rgba(249, 226, 175, 0.6);
+  --glow-sky: rgba(137, 220, 235, 0.6);
+  --glow-cyan: rgba(137, 180, 250, 0.6);
+
+  color-scheme: dark;
+}
+
 @layer base {
   html, body, #root {
     background-color: var(--color-slate-850);

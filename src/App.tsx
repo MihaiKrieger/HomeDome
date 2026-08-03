@@ -39,7 +39,9 @@ import {
   Link2,
   Sun,
   Moon,
-  Palette
+  Palette,
+  Copy,
+  Check
 } from "lucide-react";
 import { Device, Comment, Location, Network, BatteryType, CustomField, DeviceInterface, DeviceStatus } from "./types";
 import DeviceStatistics from "./components/DeviceStatistics";
@@ -85,8 +87,8 @@ export default function App() {
   // Selected device for detail panel
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [selectedDeviceDetails, setSelectedDeviceDetails] = useState<Device | null>(null);
-  const [activeTabRight, setActiveTabRight] = useState<"details" | "logs" | "stats">("stats");
-  const [viewMode, setViewMode] = useState<"list" | "subnet">("list");
+  const [activeTabRight, setActiveTabRight] = useState<"details" | "logs">("details");
+  const [viewMode, setViewMode] = useState<"list" | "subnet" | "stats">("list");
   const [isFullscreenMap, setIsFullscreenMap] = useState(false);
   const [isFullscreenCatalog, setIsFullscreenCatalog] = useState(false);
 
@@ -104,10 +106,10 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewTrashOnly, setViewTrashOnly] = useState(false);
 
-  // Theme state: 'macchiato' (dark default) or 'latte' (light)
-  const [theme, setTheme] = useState<"macchiato" | "latte">(() => {
+  // Theme state: 'macchiato' (dark default), 'mocha' (high-contrast dark), or 'latte' (light)
+  const [theme, setTheme] = useState<"macchiato" | "latte" | "mocha">(() => {
     const saved = localStorage.getItem("homedome-theme");
-    return (saved === "latte" || saved === "macchiato") ? saved : "macchiato";
+    return (saved === "latte" || saved === "macchiato" || saved === "mocha") ? saved : "macchiato";
   });
 
   useEffect(() => {
@@ -116,7 +118,11 @@ export default function App() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === "macchiato" ? "latte" : "macchiato");
+    setTheme(prev => {
+      if (prev === "macchiato") return "mocha";
+      if (prev === "mocha") return "latte";
+      return "macchiato";
+    });
   };
 
   // Settings Panel state
@@ -136,6 +142,14 @@ export default function App() {
   // Add/Edit Device Modal state
   const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyText = (text: string, label: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedField(label);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   // Deletion Confirmation state
   const [deviceToDelete, setDeviceToDelete] = useState<Device | null>(null);
@@ -1563,21 +1577,25 @@ export default function App() {
     const field = customFields.find(cf => cf.id === fieldId);
     if (!field) return val;
 
+    if (val === undefined || val === null || val === "") {
+      return <span className="text-slate-500 italic font-normal text-xs font-mono">— Not set —</span>;
+    }
+
     if (field.type === "boolean") {
       return val === "true" ? (
-        <span className="inline-flex items-center gap-1 text-emerald-600 font-medium text-xs bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-          <CheckCircle className="w-3 h-3" /> Yes
+        <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold text-xs bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 font-mono">
+          <CheckCircle className="w-3 h-3 text-emerald-400" /> Yes
         </span>
       ) : (
-        <span className="inline-flex items-center gap-1 text-slate-400 font-medium text-xs bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
-          <X className="w-3 h-3" /> No
+        <span className="inline-flex items-center gap-1 text-slate-400 font-semibold text-xs bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-mono">
+          <X className="w-3 h-3 text-slate-400" /> No
         </span>
       );
     }
     if (field.type === "number") {
-      return <span className="font-mono text-slate-800">{val || "0"}</span>;
+      return <span className="font-mono text-cyan-400 font-bold text-xs">{val}</span>;
     }
-    return <span className="text-slate-700">{val || "—"}</span>;
+    return <span className="text-slate-200 text-xs font-mono">{val}</span>;
   };
 
   // Memoized matching suggestions for predictive search
@@ -1667,7 +1685,7 @@ export default function App() {
               <h1 className="text-lg font-bold tracking-tight text-slate-100 flex items-center gap-2 font-mono">
                 HomeDome
                 <span className="text-[10px] uppercase tracking-wider font-semibold bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800/80">
-                  SQLite Asset Manager
+                  SQLite Asset Manager v1.2.1
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-mono">Track smart home devices, dynamic field configurations & historic comment logs</p>
@@ -1701,19 +1719,10 @@ export default function App() {
             <button
               onClick={toggleTheme}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all cursor-pointer"
-              title={`Switch theme (Currently: Catppuccin ${theme === "macchiato" ? "Macchiato Dark" : "Latte Light"})`}
+              title={`Switch theme (Currently: Catppuccin ${theme === "macchiato" ? "Macchiato Dark" : theme === "mocha" ? "Mocha Dark" : "Latte Light"})`}
             >
-              {theme === "macchiato" ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden sm:inline">Latte</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="hidden sm:inline">Macchiato</span>
-                </>
-              )}
+              <Palette className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline capitalize">{theme}</span>
             </button>
             <button
               onClick={() => setIsSettingsOpen(true)}
@@ -1771,6 +1780,17 @@ export default function App() {
                 vLANs
               </span>
             </button>
+            <button
+              onClick={() => setViewMode("stats")}
+              className={`py-2.5 text-xs font-mono uppercase tracking-wider border-b-2 px-1 transition-all cursor-pointer flex items-center gap-2 ${
+                viewMode === "stats"
+                  ? "border-cyan-500 text-cyan-400 font-bold"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <BarChart2 className="w-3.5 h-3.5" />
+              Statistics
+            </button>
           </div>
 
           {viewMode === "list" && (
@@ -1807,12 +1827,17 @@ export default function App() {
             onSelectDevice={(device) => {
               setSelectedDevice(device);
               setActiveTabRight("details");
+              setViewMode("list");
             }}
             onAddDeviceWithIP={handleOpenAddModalWithIP}
             customFields={customFields}
             isFullscreenMap={isFullscreenMap}
             setIsFullscreenMap={setIsFullscreenMap}
           />
+        ) : viewMode === "stats" ? (
+          <div className="w-full font-mono">
+            <DeviceStatistics devices={devices.filter(d => !d.isDeleted)} locations={locations} networks={networks} theme={theme} />
+          </div>
         ) : (
           /* Left Side: Search, Filters, and Device List */
           <section className={`flex-1 flex flex-col gap-4 min-w-0 ${isFullscreenCatalog ? "" : "md:max-w-xl lg:max-w-2xl xl:max-w-3xl"}`}>
@@ -2366,60 +2391,125 @@ export default function App() {
                 </span>
               )}
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTabRight("stats")}
-              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer font-mono ${
-                activeTabRight === "stats"
-                  ? "border-cyan-500 text-cyan-400 bg-slate-900"
-                  : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
-              }`}
-            >
-              <BarChart2 className="w-3.5 h-3.5" />
-              <span>Statistics</span>
-            </button>
           </div>
 
           {(activeTabRight === "details" || activeTabRight === "logs") && selectedDevice ? (
             <div className="flex flex-col h-full overflow-hidden animate-in fade-in duration-200">
               {/* Detail Header */}
-              <div className="p-4 border-b border-slate-800 bg-slate-900/90 flex items-start justify-between gap-4 flex-shrink-0">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-slate-100 tracking-tight font-mono">{selectedDevice.name}</h3>
-                    <button
-                      onClick={() => handleOpenEditModal(selectedDevice)}
-                      className="p-1 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-all cursor-pointer"
-                      title="Edit Device Specifications"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
+              <div className="p-4 border-b border-slate-800 bg-slate-900/90 flex flex-col gap-3 flex-shrink-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-base font-bold text-slate-100 tracking-tight font-mono">{selectedDevice.name}</h3>
+                      <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-800/80">
+                        ID #{selectedDevice.id}
+                      </span>
+                      <button
+                        onClick={() => handleOpenEditModal(selectedDevice)}
+                        className="p-1 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-all cursor-pointer flex items-center gap-1 text-[11px] font-bold font-mono bg-slate-950 border border-slate-800 px-2 py-0.5"
+                        title="Edit Device Specifications"
+                      >
+                        <Edit2 className="w-3 h-3 text-cyan-400" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-400 font-mono mt-1.5 flex-wrap">
+                      <span className="flex items-center gap-1 text-slate-300">
+                        <MapPin className="w-3 h-3 text-slate-500" />
+                        {selectedDevice.locationName}
+                      </span>
+                      <span className="text-slate-700">•</span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Calendar className="w-3 h-3 text-slate-500" />
+                        Commissioned {formatDate(selectedDevice.commissioningDate)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono mt-1">
-                    <MapPin className="w-3 h-3 text-slate-500" />
-                    <span className="font-medium text-slate-300">{selectedDevice.locationName}</span>
-                    <span className="text-slate-700">•</span>
-                    <span className="text-slate-400">Commissioned {formatDate(selectedDevice.commissioningDate)}</span>
+
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded border ${
+                      selectedDevice.status === "Online" ? "bg-emerald-950 text-emerald-400 border-emerald-800" :
+                      selectedDevice.status === "Offline" ? "bg-rose-950 text-rose-400 border-rose-800" :
+                      selectedDevice.status === "Standby" ? "bg-amber-950 text-amber-400 border-amber-800" :
+                      "bg-cyan-950 text-cyan-400 border-cyan-800"
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        selectedDevice.status === "Online" ? "bg-emerald-500 led-glow-emerald" :
+                        selectedDevice.status === "Offline" ? "bg-rose-500 led-glow-rose" :
+                        selectedDevice.status === "Standby" ? "bg-amber-500 led-glow-amber" : "bg-sky-500 led-glow-sky"
+                      }`}></span>
+                      {selectedDevice.status}
+                    </span>
+                    <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800/80">
+                      {formatRON(selectedDevice.price)}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
-                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded border ${
-                    selectedDevice.status === "Online" ? "bg-emerald-950 text-emerald-400 border-emerald-800" :
-                    selectedDevice.status === "Offline" ? "bg-rose-950 text-rose-400 border-rose-800" :
-                    selectedDevice.status === "Standby" ? "bg-amber-950 text-amber-400 border-amber-800" :
-                    "bg-cyan-950 text-cyan-400 border-cyan-800"
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      selectedDevice.status === "Online" ? "bg-emerald-500 led-glow-emerald" :
-                      selectedDevice.status === "Offline" ? "bg-rose-500 led-glow-rose" :
-                      selectedDevice.status === "Standby" ? "bg-amber-500 led-glow-amber" : "bg-sky-500 led-glow-sky"
-                    }`}></span>
-                    {selectedDevice.status}
-                  </span>
-                  <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800/80">
-                    {formatRON(selectedDevice.price)}
-                  </span>
+                {/* Quick Clipboard Copy Toolbar */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 pt-1 border-t border-slate-800/80 font-mono text-[10px]">
+                  <span className="text-[9px] uppercase font-bold text-slate-500 shrink-0">Quick Actions:</span>
+                  {selectedDevice.serialNumber && (
+                    <button
+                      onClick={() => handleCopyText(selectedDevice.serialNumber, "sn")}
+                      className="px-2 py-0.5 bg-slate-950 hover:bg-slate-800 text-slate-300 rounded border border-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                      title="Copy Serial Number"
+                    >
+                      {copiedField === "sn" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                      <span>{copiedField === "sn" ? "S/N Copied" : "Copy S/N"}</span>
+                    </button>
+                  )}
+                  {selectedDevice.macAddress && (
+                    <button
+                      onClick={() => handleCopyText(selectedDevice.macAddress, "mac")}
+                      className="px-2 py-0.5 bg-slate-950 hover:bg-slate-800 text-slate-300 rounded border border-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                      title="Copy MAC Address"
+                    >
+                      {copiedField === "mac" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                      <span>{copiedField === "mac" ? "MAC Copied" : "Copy MAC"}</span>
+                    </button>
+                  )}
+                  {selectedDevice.ipAddress && isIpSupported(selectedDevice.interface) && (
+                    <button
+                      onClick={() => handleCopyText(selectedDevice.ipAddress, "ip")}
+                      className="px-2 py-0.5 bg-slate-950 hover:bg-slate-800 text-cyan-400 rounded border border-cyan-950 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                      title="Copy IP Address"
+                    >
+                      {copiedField === "ip" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-cyan-400" />}
+                      <span>{copiedField === "ip" ? "IP Copied" : "Copy IP"}</span>
+                    </button>
+                  )}
+                  {selectedDevice.matterCode && (
+                    <button
+                      onClick={() => handleCopyText(selectedDevice.matterCode, "matter")}
+                      className="px-2 py-0.5 bg-slate-950 hover:bg-slate-800 text-slate-300 rounded border border-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                      title="Copy Matter Code"
+                    >
+                      {copiedField === "matter" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                      <span>{copiedField === "matter" ? "Matter Copied" : "Copy Matter Code"}</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      const summary = `Device: ${selectedDevice.name} (ID #${selectedDevice.id})
+Location: ${selectedDevice.locationName}
+Status: ${selectedDevice.status}
+Interface: ${selectedDevice.interface}
+S/N: ${selectedDevice.serialNumber || 'N/A'}
+MAC: ${selectedDevice.macAddress || 'N/A'}
+IP: ${selectedDevice.ipAddress || 'N/A'} (${selectedDevice.ipAllocation || 'N/A'})
+Network: ${selectedDevice.networkName || 'N/A'}
+Power: ${selectedDevice.batteryTypeName || 'N/A'}
+Valuation: ${selectedDevice.price} RON
+Commissioned: ${selectedDevice.commissioningDate}`;
+                      handleCopyText(summary, "summary");
+                    }}
+                    className="px-2 py-0.5 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 rounded border border-cyan-800 transition-all flex items-center gap-1 cursor-pointer shrink-0 font-bold"
+                    title="Copy formatted summary of all device parameters"
+                  >
+                    {copiedField === "summary" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-cyan-400" />}
+                    <span>{copiedField === "summary" ? "Summary Copied!" : "Copy Full Summary"}</span>
+                  </button>
                 </div>
               </div>
 
@@ -2429,44 +2519,97 @@ export default function App() {
                   
                   {/* Core Specifications Grid */}
                   <div>
-                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Core Specifications</h4>
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                      <span>Core Specifications</span>
+                      <span className="text-[9px] text-slate-500 font-normal">Read-Only Inspection Mode</span>
+                    </h4>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+                      
+                      {/* Serial Number */}
                       <div className="min-w-0">
-                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Serial Number</span>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Serial Number</span>
+                          {selectedDevice.serialNumber && (
+                            <button
+                              onClick={() => handleCopyText(selectedDevice.serialNumber, "sn")}
+                              className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer"
+                              title="Copy S/N"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {selectedDevice.serialNumber ? highlightMatch(selectedDevice.serialNumber, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Provided</span>}
                         </span>
                       </div>
 
+                      {/* MAC Address */}
                       <div className="min-w-0">
-                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">MAC / IEEE Address</span>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">MAC / IEEE Address</span>
+                          {selectedDevice.macAddress && (
+                            <button
+                              onClick={() => handleCopyText(selectedDevice.macAddress, "mac")}
+                              className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer"
+                              title="Copy MAC Address"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {selectedDevice.macAddress ? highlightMatch(selectedDevice.macAddress, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Provided</span>}
                         </span>
                       </div>
 
+                      {/* Matter Code */}
                       <div className="min-w-0">
-                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Matter Code</span>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Matter Code</span>
+                          {selectedDevice.matterCode && (
+                            <button
+                              onClick={() => handleCopyText(selectedDevice.matterCode, "matter")}
+                              className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer"
+                              title="Copy Matter Code"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         <span className="text-xs font-mono font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {selectedDevice.matterCode ? highlightMatch(selectedDevice.matterCode, searchTerm) : <span className="text-slate-500 italic font-sans font-normal">Not Matter Cert</span>}
                         </span>
                       </div>
 
+                      {/* Network SSID */}
                       <div className="min-w-0">
                         <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Network SSID</span>
                         <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {!isNetworkSupported(selectedDevice.interface) ? (
-                            <span className="text-slate-500 italic font-normal">N/A</span>
+                            <span className="text-slate-500 italic font-normal">N/A ({selectedDevice.interface})</span>
                           ) : selectedDevice.networkName ? (
-                            selectedDevice.networkName
+                            <span className="text-slate-200 font-semibold">{selectedDevice.networkName}</span>
                           ) : (
                             <span className="text-slate-500 italic font-normal">Unassigned</span>
                           )}
                         </span>
                       </div>
 
+                      {/* IPv4 Address */}
                       <div className="min-w-0">
-                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">IPv4 Address</span>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">IPv4 Address</span>
+                          {selectedDevice.ipAddress && isIpSupported(selectedDevice.interface) && (
+                            <button
+                              onClick={() => handleCopyText(selectedDevice.ipAddress, "ip")}
+                              className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer"
+                              title="Copy IP Address"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
                           {!isIpSupported(selectedDevice.interface) ? (
                             <span className="text-slate-500 italic font-normal">N/A</span>
@@ -2478,13 +2621,14 @@ export default function App() {
                         </span>
                       </div>
 
+                      {/* Power / Battery Specification */}
                       <div className="min-w-0 flex flex-col justify-between">
                         <div>
                           <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                             {isBatteryPowered(selectedDevice.batteryTypeName) ? "Battery Specification" : "Power Specification"}
                           </span>
                           <span className="text-xs font-medium text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
-                            {selectedDevice.batteryTypeName}
+                            {selectedDevice.batteryTypeName || <span className="text-slate-500 italic font-normal">Not Specified</span>}
                           </span>
                         </div>
                         {selectedDevice.batteryTypeName && isBatteryPowered(selectedDevice.batteryTypeName) && (
@@ -2500,6 +2644,7 @@ export default function App() {
                         )}
                       </div>
 
+                      {/* Hardware Interface */}
                       <div className="min-w-0">
                         <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Hardware Interface</span>
                         <span className="text-xs font-bold text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
@@ -2507,12 +2652,42 @@ export default function App() {
                         </span>
                       </div>
 
+                      {/* Location Placement */}
+                      <div className="min-w-0">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Location Placement</span>
+                        <span className="text-xs font-bold text-slate-200 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                          {selectedDevice.locationName}
+                        </span>
+                      </div>
+
+                      {/* Valuation / Purchase Price */}
+                      <div className="min-w-0">
+                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Asset Valuation</span>
+                        <span className="text-xs font-bold text-cyan-400 truncate block bg-slate-900 px-2 py-1 rounded border border-slate-800 font-mono">
+                          {formatRON(selectedDevice.price)}
+                        </span>
+                      </div>
+
+                      {/* Description / Notes */}
                       <div className="col-span-2 sm:col-span-3 min-w-0 border-t border-slate-800/80 pt-2.5 mt-1">
-                        <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Description / Notes</span>
-                        <div className="text-xs text-slate-300 bg-slate-900 p-2.5 rounded border border-slate-800 leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-y-auto font-mono">
-                          {selectedDevice.description ? highlightMatch(selectedDevice.description, searchTerm) : <span className="text-slate-500 italic font-normal">No description provided</span>}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Description / Operational Notes</span>
+                          {selectedDevice.description && (
+                            <button
+                              onClick={() => handleCopyText(selectedDevice.description || "", "desc")}
+                              className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-[10px] flex items-center gap-1 font-mono"
+                              title="Copy notes"
+                            >
+                              <Copy className="w-3 h-3" />
+                              <span>{copiedField === "desc" ? "Copied" : "Copy Notes"}</span>
+                            </button>
+                          )}
+                        </div>
+                        <div className="text-xs text-slate-300 bg-slate-900 p-2.5 rounded border border-slate-800 leading-relaxed whitespace-pre-wrap max-h-[140px] overflow-y-auto font-mono">
+                          {selectedDevice.description ? highlightMatch(selectedDevice.description, searchTerm) : <span className="text-slate-500 italic font-normal">No description provided for this device.</span>}
                         </div>
                       </div>
+
                     </div>
                   </div>
 
@@ -2619,34 +2794,39 @@ export default function App() {
                   {/* Custom Dynamics values */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                        Custom Configurations
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <Tag className="w-3 h-3 text-slate-500" />
+                        <span>Custom Dynamic Attributes</span>
+                        <span className="text-[9px] text-slate-500 font-mono font-normal">({customFields.length} Defined)</span>
                       </h4>
-                      {customFields.length === 0 && (
-                        <button
-                          onClick={() => {
-                            setIsSettingsOpen(true);
-                            setSettingsTab("custom_fields");
-                          }}
-                          className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"
-                        >
-                          + Create dynamic field
-                        </button>
-                      )}
+                      <button
+                        onClick={() => {
+                          setIsSettingsOpen(true);
+                          setSettingsTab("custom_fields");
+                        }}
+                        className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer font-mono"
+                      >
+                        + Manage Fields
+                      </button>
                     </div>
 
                     {customFields.length === 0 ? (
                       <div className="text-center p-3 border border-dashed border-slate-800 rounded-lg bg-slate-950/40">
-                        <p className="text-xs text-slate-500">No dynamic custom fields configured yet.</p>
+                        <p className="text-xs text-slate-500">No dynamic custom fields configured in system schema.</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-2.5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {customFields.map((field) => {
                           const rawValue = selectedDevice.customValues[field.id];
                           return (
-                            <div key={field.id} className="border border-slate-800 bg-slate-950/80 p-2.5 rounded-lg flex flex-col justify-between min-h-[50px]">
-                              <span className="text-[9px] font-bold text-slate-500 uppercase truncate" title={field.name}>{field.name}</span>
-                              <div className="mt-1 text-xs font-mono font-medium text-slate-200 truncate">
+                            <div key={field.id} className="border border-slate-800 bg-slate-950/80 p-2.5 rounded-lg flex flex-col justify-between min-h-[55px] hover:border-slate-700 transition-colors">
+                              <div className="flex items-center justify-between gap-1 mb-1">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase truncate" title={field.name}>{field.name}</span>
+                                <span className="text-[8px] font-mono font-bold text-slate-500 bg-slate-900 px-1 py-0.2 rounded border border-slate-800 uppercase shrink-0">
+                                  {field.type}
+                                </span>
+                              </div>
+                              <div className="text-xs font-mono font-medium text-slate-200 truncate">
                                 {renderCustomValue(field.id, rawValue)}
                               </div>
                             </div>
@@ -2843,7 +3023,23 @@ export default function App() {
 
             </div>
           ) : (
-            <DeviceStatistics devices={devices.filter(d => !d.isDeleted)} locations={locations} networks={networks} theme={theme} />
+            <div className="flex flex-col items-center justify-center p-8 text-center text-slate-400 h-full my-auto font-mono">
+              <div className="w-12 h-12 rounded-full bg-slate-950 flex items-center justify-center text-cyan-400 mb-4 border border-slate-800 shadow-inner">
+                <Cpu className="w-6 h-6" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-200 mb-1">No Device Selected</h4>
+              <p className="text-xs text-slate-400 max-w-xs leading-relaxed mb-4">
+                Select a device from the catalog to view hardware specifications, network details, and comment logs.
+              </p>
+              <button
+                type="button"
+                onClick={() => setViewMode("stats")}
+                className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 bg-slate-950 hover:bg-slate-900 px-3 py-2 rounded-lg border border-cyan-900/80 transition-all cursor-pointer"
+              >
+                <BarChart2 className="w-3.5 h-3.5 text-cyan-400" />
+                View System Statistics Menu
+              </button>
+            </div>
           )}
         </section>
         )}
@@ -2858,7 +3054,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-900 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-800">
-              v1.2.0
+              v1.2.1
             </span>
           </div>
         </div>
@@ -3021,6 +3217,38 @@ export default function App() {
                         <span className="w-4 h-4 rounded-full bg-[#a6da95] inline-block" title="Green"></span>
                         <span className="w-4 h-4 rounded-full bg-[#ed8796] inline-block" title="Red"></span>
                         <span className="w-4 h-4 rounded-full bg-[#c6a0f6] inline-block" title="Mauve"></span>
+                      </div>
+                    </button>
+
+                    {/* Mocha Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("mocha")}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        theme === "mocha"
+                          ? "bg-slate-950 border-cyan-500 ring-1 ring-cyan-500/50 shadow-md"
+                          : "bg-slate-950/50 border-slate-800 hover:border-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Moon className="w-4 h-4 text-indigo-400" />
+                          <span className="text-xs font-bold text-slate-100">Catppuccin Mocha</span>
+                          <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">Dark (Deep)</span>
+                        </div>
+                        {theme === "mocha" && (
+                          <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 border border-cyan-800 px-2 py-0.5 rounded">Active</span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 mb-3">Ultra-deep dark flavor with rich contrast, mantle `#181825` and crust `#11111b` canvas.</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-[#11111b] border border-slate-700 inline-block" title="Crust"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#181825] border border-slate-700 inline-block" title="Mantle"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#1e1e2e] border border-slate-700 inline-block" title="Base"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#89b4fa] inline-block" title="Blue"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#a6e3a1] inline-block" title="Green"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#f38ba8] inline-block" title="Red"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#cba6f7] inline-block" title="Mauve"></span>
                       </div>
                     </button>
 
