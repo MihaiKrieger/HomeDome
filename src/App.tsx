@@ -96,9 +96,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Search & Filter State
+  // Search & Filter State (Real-time Live Filter)
   const [searchTerm, setSearchTerm] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [filterLocation, setFilterLocation] = useState("");
   const [filterNetwork, setFilterNetwork] = useState("");
   const [filterInterface, setFilterInterface] = useState("");
@@ -1598,47 +1597,25 @@ export default function App() {
     return <span className="text-slate-200 text-xs font-mono">{val}</span>;
   };
 
-  // Memoized matching suggestions for predictive search
-  const predictiveSuggestions = React.useMemo(() => {
-    if (!searchTerm.trim()) return [];
-    const query = searchTerm.toLowerCase();
-    return devices.filter((device) => {
-      const matchesBin = viewTrashOnly ? device.isDeleted : !device.isDeleted;
-      if (!matchesBin) return false;
-
-      const matchesCustom = device.customValues && Object.values(device.customValues).some(
-        (val) => val && (val as string).toLowerCase().includes(query)
-      );
-
-      return (
-        device.name.toLowerCase().includes(query) ||
-        device.serialNumber.toLowerCase().includes(query) ||
-        device.macAddress.toLowerCase().includes(query) ||
-        device.ipAddress.toLowerCase().includes(query) ||
-        device.matterCode.toLowerCase().includes(query) ||
-        (device.description && device.description.toLowerCase().includes(query)) ||
-        matchesCustom
-      );
-    }).slice(0, 8);
-  }, [searchTerm, devices, viewTrashOnly]);
-
-  // Filter & Search Implementation
+  // Filter & Live Search Implementation
   const filteredDevices = devices.filter((device) => {
     const matchesBin = viewTrashOnly ? device.isDeleted : !device.isDeleted;
     if (!matchesBin) return false;
 
-    const matchesCustom = device.customValues && Object.values(device.customValues).some(
-      (val) => val && (val as string).toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const query = searchTerm.toLowerCase().trim();
+    const matchesCustom = query ? device.customValues && Object.values(device.customValues).some(
+      (val) => val && (val as string).toLowerCase().includes(query)
+    ) : true;
 
-    const matchesSearch =
-      device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.serialNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.macAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.ipAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.matterCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (device.description && device.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      matchesCustom;
+    const matchesSearch = !query || (
+      device.name.toLowerCase().includes(query) ||
+      device.serialNumber.toLowerCase().includes(query) ||
+      device.macAddress.toLowerCase().includes(query) ||
+      device.ipAddress.toLowerCase().includes(query) ||
+      device.matterCode.toLowerCase().includes(query) ||
+      (device.description && device.description.toLowerCase().includes(query)) ||
+      matchesCustom
+    );
 
     const matchesLocation = !filterLocation || device.locationId === Number(filterLocation);
     const matchesNetwork = !filterNetwork || device.networkId === Number(filterNetwork);
@@ -1685,7 +1662,7 @@ export default function App() {
               <h1 className="text-lg font-bold tracking-tight text-slate-100 flex items-center gap-2 font-mono">
                 HomeDome
                 <span className="text-[10px] uppercase tracking-wider font-semibold bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800/80">
-                  SQLite Asset Manager v1.2.1
+                  SQLite Asset Manager v1.2.2
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-mono">Track smart home devices, dynamic field configurations & historic comment logs</p>
@@ -1845,7 +1822,21 @@ export default function App() {
           {/* Filters Dashboard Card */}
           <div className="bg-slate-900 rounded-xl border border-slate-800 p-3.5 shadow-xs flex flex-col gap-3 font-mono">
             
-            {/* Search Input */}
+            {/* Search Header */}
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Search className="w-3 h-3 text-cyan-400" />
+                <span>Device Search</span>
+              </label>
+              {searchTerm && (
+                <span className="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                  Live filtering active
+                </span>
+              )}
+            </div>
+
+            {/* Search Input Bar (Real-Time Live Filter) */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-3.5 w-3.5 text-slate-500" />
@@ -1853,146 +1844,22 @@ export default function App() {
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setShowSuggestions(true);
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                placeholder="Search by name, serial number, MAC address, IP, Matter code..."
-                className="block w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg text-xs font-mono text-slate-200 placeholder-slate-500 outline-hidden transition-all"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search catalog by name, S/N, MAC, IP, Matter code, notes..."
+                className="block w-full pl-9 pr-8 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg text-xs font-mono text-slate-200 placeholder-slate-500 outline-hidden transition-all"
               />
+
               {searchTerm && (
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setShowSuggestions(false);
-                  }}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-
-              {/* Floating suggestions dropdown */}
-              {showSuggestions && searchTerm.trim() && predictiveSuggestions.length > 0 && (
-                <>
-                  {/* Invisible backdrop to dismiss dropdown */}
-                  <div 
-                    className="fixed inset-0 z-[45]"
-                    onClick={() => setShowSuggestions(false)}
-                  />
-                  
-                  {/* Dropdown menu */}
-                  <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900 rounded-lg border border-slate-700 shadow-2xl z-50 overflow-hidden max-h-80 overflow-y-auto font-mono">
-                    {/* Header line */}
-                    <div className="bg-slate-950 px-3 py-1.5 border-b border-slate-800 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Predictive Matches</span>
-                      <span className="text-[9px] text-cyan-400 font-mono">{predictiveSuggestions.length} items found</span>
-                    </div>
-                    
-                    <div className="divide-y divide-slate-800">
-                      {predictiveSuggestions.map((dev) => {
-                        const query = searchTerm.toLowerCase();
-                        
-                        // Find matches to highlight and display
-                        const matchDetails: { label: string; element: React.ReactNode }[] = [];
-                        
-                        if (dev.serialNumber && dev.serialNumber.toLowerCase().includes(query)) {
-                          matchDetails.push({ label: "S/N", element: highlightMatch(dev.serialNumber, searchTerm) });
-                        }
-                        if (dev.macAddress && dev.macAddress.toLowerCase().includes(query)) {
-                          matchDetails.push({ label: "MAC", element: highlightMatch(dev.macAddress, searchTerm) });
-                        }
-                        if (dev.ipAddress && dev.ipAddress.toLowerCase().includes(query)) {
-                          matchDetails.push({ label: "IP", element: highlightMatch(dev.ipAddress, searchTerm) });
-                        }
-                        if (dev.matterCode && dev.matterCode.toLowerCase().includes(query)) {
-                          matchDetails.push({ label: "Matter", element: highlightMatch(dev.matterCode, searchTerm) });
-                        }
-                        if (dev.description && dev.description.toLowerCase().includes(query)) {
-                          matchDetails.push({ label: "Desc", element: highlightMatch(dev.description, searchTerm) });
-                        }
-                        if (dev.customValues) {
-                          (Object.entries(dev.customValues) as [string, string][]).forEach(([fieldIdStr, val]) => {
-                            if (val && val.toLowerCase().includes(query)) {
-                              const fieldId = Number(fieldIdStr);
-                              const field = customFields.find((cf) => cf.id === fieldId);
-                              const label = field ? field.name : "Custom";
-                              matchDetails.push({ label, element: highlightMatch(val, searchTerm) });
-                            }
-                          });
-                        }
-
-                        // Determine status colors for indicator dot
-                        let statusColor = "bg-slate-500";
-                        if (dev.status === "Online") statusColor = "bg-emerald-500 led-glow-emerald";
-                        else if (dev.status === "Offline") statusColor = "bg-rose-500 led-glow-rose";
-                        else if (dev.status === "Standby") statusColor = "bg-amber-500 led-glow-amber";
-                        else if (dev.status === "Maintenance") statusColor = "bg-sky-500 led-glow-sky";
-
-                        return (
-                          <div
-                            key={dev.id}
-                            onClick={() => {
-                              setSearchTerm(dev.name);
-                              setSelectedDevice(dev);
-                              setActiveTabRight("details");
-                              setShowSuggestions(false);
-                            }}
-                            className="px-3 py-2 hover:bg-slate-800/80 cursor-pointer transition-colors flex items-center justify-between gap-3 text-left"
-                          >
-                            <div className="min-w-0 flex-1">
-                              {/* Device Name with Highlight */}
-                              <div className="font-semibold text-slate-200 text-xs truncate">
-                                {highlightMatch(dev.name, searchTerm)}
-                              </div>
-                              
-                              {/* Location and Network details */}
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono mt-0.5 truncate">
-                                <span className="bg-slate-950 text-slate-300 px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-slate-800">
-                                  <MapPin className="w-2.5 h-2.5 text-slate-500" />
-                                  {dev.locationName}
-                                </span>
-                                {isNetworkSupported(dev.interface) && dev.networkName && (
-                                  <>
-                                    <span className="text-slate-700">|</span>
-                                    <span className="flex items-center gap-0.5 text-slate-400">
-                                      <Wifi className="w-2.5 h-2.5 text-slate-500" />
-                                      {dev.networkName}
-                                    </span>
-                                  </>
-                                )}
-                              </div>
-
-                              {/* Highlighted matched sub-details if any */}
-                              {matchDetails.length > 0 && (
-                                <div className="flex items-center gap-2 flex-wrap mt-1">
-                                  {matchDetails.map((m, idx) => (
-                                    <span key={idx} className="inline-flex items-center gap-0.5 text-[9px] bg-slate-950 text-slate-300 px-1 py-0.2 rounded border border-slate-800 font-mono">
-                                      <span className="text-slate-500 font-bold uppercase">{m.label}:</span>
-                                      <span className="font-mono text-cyan-400">{m.element}</span>
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Right block: Status, Interface */}
-                            <div className="flex flex-col items-end gap-1 flex-shrink-0 font-mono">
-                              <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700 px-1.5 py-0.2 rounded">
-                                {dev.interface}
-                              </span>
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-300">
-                                <span className={`w-1.5 h-1.5 rounded-full ${statusColor}`}></span>
-                                {dev.status}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
+                <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="p-1 text-slate-500 hover:text-slate-300 rounded cursor-pointer transition-colors"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               )}
             </div>
 
@@ -2067,6 +1934,11 @@ export default function App() {
                     <>
                       Showing <b className="text-slate-200">{filteredDevices.length}</b> of <b className="text-slate-200">{devices.length}</b> devices
                     </>
+                  )}
+                  {searchTerm && (
+                    <span className="ml-2 text-cyan-400 text-[10px]">
+                      (search: "{searchTerm}")
+                    </span>
                   )}
                 </span>
                 <button
@@ -3054,7 +2926,7 @@ Commissioned: ${selectedDevice.commissioningDate}`;
           </div>
           <div className="flex items-center gap-4">
             <span className="font-mono bg-slate-900 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-800">
-              v1.2.1
+              v1.2.2
             </span>
           </div>
         </div>

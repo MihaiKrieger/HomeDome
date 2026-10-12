@@ -1,4 +1,4 @@
-# HomeDome Device Tracker (v1.2.1)
+# HomeDome Device Tracker (v1.2.2)
 
 **HomeDome Device Tracker** is a self-hosted, full-stack asset management application designed to organize, document, and manage smart home hardware, IoT devices, network infrastructure, and power peripherals.
 
@@ -7,7 +7,7 @@
 ## 🌟 Key Features
 
 - **Primary Navigation Views**
-  - **Device Catalog**: Filter, search, inspect, and manage device inventories with soft-delete recycle bin support.
+  - **Device Catalog**: Real-time live catalog search, multi-taxonomy filters, hardware inspection, and soft-delete recycle bin support.
   - **Subnet & IP Map VLANS**: Visual IP allocation grid and network assignment map.
   - **Statistics Panel**: Full-screen telemetry dashboard highlighting network distribution, valuation charts, hardware interface splits, and status metrics.
 - **Read-Only Inspection & Quick Actions Toolbar**
